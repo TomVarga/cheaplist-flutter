@@ -8,63 +8,52 @@ import 'package:redux_epics/redux_epics.dart';
 import 'package:rxdart/rxdart.dart';
 
 final allEpics = combineEpics<AppState>(
-    [counterEpic, incrementEpic, merchantItemEpic]);
+    [
+      firstMerchantItemEpic,
+      secondMerchantItemEpic
+    ]);
 
-Stream<dynamic> incrementEpic(Stream<dynamic> actions,
+
+Stream<dynamic> firstMerchantItemEpic(Stream<dynamic> actions,
     EpicStore<AppState> store) {
   return new Observable(actions)
-      .ofType(new TypeToken<IncrementCounterAction>())
-      .flatMap((_) {
-    return new Observable.fromFuture(Firestore.instance.document("users/tudor")
-        .updateData({'counter': store.state.counter + 1})
-        .then((_) => new CounterDataPushedAction())
-        .catchError((error) => new CounterOnErrorEventAction(error)));
-  });
-}
-
-Stream<dynamic> counterEpic(Stream<dynamic> actions,
-    EpicStore<AppState> store) {
-  return new Observable(actions) // 1
-      .ofType(new TypeToken<RequestCounterDataEventsAction>())
-      .flatMapLatest((RequestCounterDataEventsAction requestAction) {
-    return getUserClicks() // 4
-        .map((counter) => new CounterOnDataEventAction(counter))
-        .takeUntil(
-        actions.where((action) => action is CancelCounterDataEventsAction));
-  });
-}
-
-Observable<int> getUserClicks() {
-  return new Observable(Firestore.instance
-      .document("users/tudor")
-      .snapshots)
-      .map((DocumentSnapshot doc) => doc['counter'] as int);
-}
-
-Stream<dynamic> merchantItemEpic(Stream<dynamic> actions, EpicStore<AppState>
-store) {
-  return new Observable(actions)
-      .ofType(new TypeToken<RequestMerchantDataEventsAction>())
-      .flatMapLatest((RequestMerchantDataEventsAction requestAction) {
-    return getItems()
-        .map((items) => new MerchantItemOnDataEventAction(items))
+      .ofType(new TypeToken<RequestFirstMerchantDataEventsAction>())
+      .flatMapLatest((RequestFirstMerchantDataEventsAction requestAction) {
+    return getMerchantItems("3QFbXk5gw0KXfNCZTiOi")
+        .map((items) => new FirstMerchantItemOnDataEventAction(items))
         .takeUntil(actions.where((action) =>
     action is
-    CancelMerchantDataEventsAction));
+    CancelFirstMerchantDataEventsAction));
   });
 }
 
-Observable<List<MerchantItem>> getItems() {
+Stream<dynamic> secondMerchantItemEpic(Stream<dynamic> actions,
+    EpicStore<AppState> store) {
+  return new Observable(actions)
+      .ofType(new TypeToken<RequestSecondMerchantDataEventsAction>())
+      .flatMapLatest((RequestSecondMerchantDataEventsAction requestAction) {
+    return getMerchantItems("oS53CrXawnyVOXVf6VKw")
+        .map((items) => new SecondMerchantItemOnDataEventAction(items))
+        .takeUntil(actions.where((action) =>
+    action is
+    CancelSecondMerchantDataEventsAction));
+  });
+}
+
+Observable<List<MerchantItem>> getMerchantItems(String merchantId) {
   var observable = new Observable(Firestore.instance
       .collection
-    ("merchantItems/3QFbXk5gw0KXfNCZTiOi/items")
+    ("merchantItems/" + merchantId + "/items")
       .snapshots
-      .map((QuerySnapshot
-  querySnapshot) {
+      .map((QuerySnapshot querySnapshot) {
     var documents = querySnapshot.documents;
     List<MerchantItem> list = new List();
-    documents.forEach((DocumentSnapshot doc) =>
-        list.add(new MerchantItem(doc.data['name'], doc.data['price']))
+    documents.forEach((DocumentSnapshot doc) {
+      var merchantItem = new MerchantItem(doc.data['name'], doc
+          .data['price'], merchantId);
+      print(merchantItem);
+      return list.add(merchantItem);
+    }
     );
     return list;
   }

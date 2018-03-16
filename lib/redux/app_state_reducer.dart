@@ -6,26 +6,30 @@ import 'package:redux/redux.dart';
 
 AppState appStateReducer(AppState state, dynamic action) {
   return new AppState(
-      counter: counterReducer(state.counter, action),
-      merchantItems: merchantItemReducer(state.merchantItems, action)
+      firstMerchantItems: firstMerchantItemReducer(state.firstMerchantItems,
+          action),
+      secondMerchantItems: secondMerchantItemReducer(state.secondMerchantItems,
+          action)
   );
 }
 
-final counterReducer = combineTypedReducers<int>([
-  new ReducerBinding<int, CounterOnDataEventAction>(_setCounter),
+final firstMerchantItemReducer = combineTypedReducers<List<MerchantItem>>([
+  new ReducerBinding<List<MerchantItem>, FirstMerchantItemOnDataEventAction>
+    (_setFirstMerchantItems),
 ]);
 
-final merchantItemReducer = combineTypedReducers<List<MerchantItem>>([
-  new ReducerBinding<List<MerchantItem>, MerchantItemOnDataEventAction>
-    (_setMerchantItems),
+List<MerchantItem> _setFirstMerchantItems(List<MerchantItem> oldList,
+    FirstMerchantItemOnDataEventAction action) {
+  return action.firstMerchantItems;
+}
+
+
+final secondMerchantItemReducer = combineTypedReducers<List<MerchantItem>>([
+  new ReducerBinding<List<MerchantItem>, SecondMerchantItemOnDataEventAction>
+    (_setSecondMerchantItems),
 ]);
 
-int _setCounter(int oldCounter, CounterOnDataEventAction action) {
-  return action.counter;
+List<MerchantItem> _setSecondMerchantItems(List<MerchantItem> oldList,
+    SecondMerchantItemOnDataEventAction action) {
+  return action.secondMerchantItems;
 }
-
-List<MerchantItem> _setMerchantItems(List<MerchantItem> oldList,
-    MerchantItemOnDataEventAction action) {
-  return action.merchantItems;
-}
-

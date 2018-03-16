@@ -21,10 +21,8 @@ class MyApp extends StatelessWidget {
     return new StoreProvider(
       store: store,
       child: new MaterialApp(
-        title: 'Flutter: Firebase & Redux in sync',
-        theme: new ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        title: 'CheapList',
+        theme: new ThemeData.light(),
         home: new SampleAppPage(),
       ),
     );
@@ -44,44 +42,92 @@ class _SampleAppPageState extends State<SampleAppPage> {
   Widget build(BuildContext context) {
     return new StoreBuilder(
         onInit: (store) =>
-            store.dispatch(new RequestMerchantDataEventsAction()),
+            mainStoreInitDispatch(store),
         onDispose: (store) =>
-            store.dispatch(new CancelMerchantDataEventsAction()),
+            mainStoreDisposeDispatch(store),
         builder: (context, Store<AppState> store) {
           return new Scaffold(
-              appBar: new AppBar(
-                title: new Text("CheapList"),
-              ),
-              body: new ListView.builder(
-                  itemCount: getLength(store.state),
-                  itemBuilder: (BuildContext context, int position) {
-                    return getRow(store, position);
-                  })
+            appBar: new AppBar(
+              title: new Text("CheapList"),
+            ),
+            body: new Row(
+              children: <Widget>[
+                new Expanded (
+                    child: new ListView.builder(
+                        key: new Key("firstMerchantItemList"),
+                        itemCount: getFirstMerchantItemsLength(store.state),
+                        itemBuilder: (BuildContext context, int position) {
+                          return getFirstMerchantRow(store, position);
+                        })
+                ),
+                new Expanded (
+                    child: new ListView.builder(
+                        key: new Key("secondMerchantItemList"),
+                        itemCount: getSecondMerchantItemsLength(store.state),
+                        itemBuilder: (BuildContext context, int position) {
+                          return getSecondMerchantRow(store, position);
+                        })
+                ),
+              ],
+            ),
           );
         }
     );
   }
 
-  int getLength(AppState state) {
+  int getFirstMerchantItemsLength(AppState state) {
     if (state == null) {
       return 0;
     }
-    if (state.merchantItems == null) {
+    if (state.firstMerchantItems == null) {
       return 0;
     }
-    return state.merchantItems.length;
+    return state.firstMerchantItems.length;
   }
 
-  Widget getRow(Store store, int i) {
+  Widget getFirstMerchantRow(Store store, int i) {
     return new GestureDetector(
       child: new Padding(
           padding: new EdgeInsets.all(10.0),
           child: new Column(mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Text(store.state.merchantItems[i].name),
-                new Text('${store.state.merchantItems[i].price}')
+                new Text(store.state.firstMerchantItems[i].name),
+                new Text('${store.state.firstMerchantItems[i].price}')
               ])),
     );
   }
 
+  int getSecondMerchantItemsLength(AppState state) {
+    if (state == null) {
+      return 0;
+    }
+    if (state.secondMerchantItems == null) {
+      return 0;
+    }
+    return state.secondMerchantItems.length;
+  }
+
+  Widget getSecondMerchantRow(Store store, int i) {
+    return new GestureDetector(
+      child: new Padding(
+          padding: new EdgeInsets.all(10.0),
+          child: new Column(mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new Text(store.state.secondMerchantItems[i].name),
+                new Text('${store.state.secondMerchantItems[i].price}')
+              ])),
+    );
+  }
+
+  void mainStoreInitDispatch(Store store) {
+    store.dispatch(new RequestFirstMerchantDataEventsAction());
+    store.dispatch(new RequestSecondMerchantDataEventsAction());
+  }
+
+  mainStoreDisposeDispatch(Store store) {
+    store.dispatch(new CancelFirstMerchantDataEventsAction());
+    store.dispatch(new CancelSecondMerchantDataEventsAction());
+  }
+
 }
+

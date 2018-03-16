@@ -3,15 +3,17 @@ import 'package:meta/meta.dart';
 
 @immutable
 class AppState {
-  final int counter;
-  final List<MerchantItem> merchantItems;
+  final List<MerchantItem> firstMerchantItems;
+  final List<MerchantItem> secondMerchantItems;
 
   AppState({
-    this.counter = 0,
-    this.merchantItems
+    this.firstMerchantItems,
+    this.secondMerchantItems
   });
 
-  AppState copyWith({int counter, List<MerchantItem> merchantItems}) =>
-      new AppState(counter: counter ?? this
-          .counter, merchantItems: merchantItems ?? this.merchantItems);
+  AppState copyWith({List<MerchantItem> firstMerchantItems,
+    List<MerchantItem> secondMerchantItems}) =>
+      new AppState(firstMerchantItems: firstMerchantItems ?? this
+          .firstMerchantItems, secondMerchantItems: secondMerchantItems
+          ?? this.secondMerchantItems);
 }

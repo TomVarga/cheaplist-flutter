@@ -1,41 +1,30 @@
 import 'package:cheaplist/redux/merchant_tem.dart';
 
-class IncrementCounterAction {}
+class RequestFirstMerchantDataEventsAction {}
 
-class CounterDataPushedAction {}
+class CancelFirstMerchantDataEventsAction {}
 
-class RequestCounterDataEventsAction {}
+class FirstMerchantItemOnDataEventAction {
+  final List<MerchantItem> firstMerchantItems;
 
-class CancelCounterDataEventsAction {}
-
-class RequestMerchantDataEventsAction {}
-
-class CancelMerchantDataEventsAction {}
-
-class MerchantItemOnDataEventAction {
-  final List<MerchantItem> merchantItems;
-
-  MerchantItemOnDataEventAction(this.merchantItems);
+  FirstMerchantItemOnDataEventAction(this.firstMerchantItems);
 
   @override
   String toString() =>
-      'MerchantItemOnDataEventAction{merchantItems: $merchantItems}';
+      'FirstMerchantItemOnDataEventAction{firstMerchantItems: $firstMerchantItems}';
 }
 
-class CounterOnDataEventAction {
-  final int counter;
+class RequestSecondMerchantDataEventsAction {}
 
-  CounterOnDataEventAction(this.counter);
+class CancelSecondMerchantDataEventsAction {}
+
+class SecondMerchantItemOnDataEventAction {
+  final List<MerchantItem> secondMerchantItems;
+
+  SecondMerchantItemOnDataEventAction(this.secondMerchantItems);
 
   @override
-  String toString() => 'CounterOnDataEventAction{counter: $counter}';
+  String toString() =>
+      'SecondMerchantItemOnDataEventAction{secondMerchantItems: $secondMerchantItems}';
 }
 
-class CounterOnErrorEventAction {
-  final dynamic error;
-
-  CounterOnErrorEventAction(this.error);
-
-  @override
-  String toString() => 'CounterOnErrorEventAction{error: $error}';
-}
