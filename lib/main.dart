@@ -49,7 +49,8 @@ class MerchantItemList extends StatelessWidget {
             return new GestureDetector(
               child: new Padding(
                   padding: new EdgeInsets.all(10.0),
-                  child: new Column(mainAxisAlignment: MainAxisAlignment.center,
+                  child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new Text(item.name),
                         new Text('${item.price}'),
@@ -61,8 +62,8 @@ class MerchantItemList extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  new MaterialPageRoute(builder: (context) =>
-                  new DetailScreen(item: item)),
+                  new MaterialPageRoute(
+                      builder: (context) => new DetailScreen(item: item)),
                 );
               },
             );
@@ -80,7 +81,6 @@ Stream<QuerySnapshot> getMerchantItems(String merchantId) {
 }
 
 class DetailScreen extends StatelessWidget {
-
   DetailScreen({Key key, this.item}) : super(key: key);
 
   final MerchantItem item;
@@ -90,12 +90,11 @@ class DetailScreen extends StatelessWidget {
     return new Scaffold(
         appBar: new AppBar(
           title: new Text(item.name),
-          elevation: Theme
-              .of(context)
-              .platform == TargetPlatform.iOS ? 0.0 : 4.0,
+          elevation:
+              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
         body: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new Text(item.name),
             new Image.network(
@@ -103,13 +102,11 @@ class DetailScreen extends StatelessWidget {
               width: 250.0,
             )
           ],
-        )
-    );
+        ));
   }
 }
 
 class MyHomePage extends StatelessWidget {
-
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
@@ -119,17 +116,14 @@ class MyHomePage extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(title),
-        elevation: Theme
-            .of(context)
-            .platform == TargetPlatform.iOS ? 0.0 : 4.0,
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body:
-      new Row(
+      body: new Row(
         children: <Widget>[
-          new Expanded (
+          new Expanded(
             child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi"),
           ),
-          new Expanded (
+          new Expanded(
             child: new MerchantItemList("oS53CrXawnyVOXVf6VKw"),
           ),
         ],
