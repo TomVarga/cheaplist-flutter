@@ -31,11 +31,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MerchantItemList extends StatelessWidget {
-  var merchantId;
+  final String merchantId;
 
-  MerchantItemList(String merchantId) {
-    this.merchantId = merchantId;
-  }
+  MerchantItemList(merchantId) : merchantId = merchantId;
 
   @override
   Widget build(BuildContext context) {
