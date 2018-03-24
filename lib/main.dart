@@ -51,19 +51,45 @@ class MerchantItemList extends StatelessWidget {
                         new Text(document['name']),
                         new Text('${document['price']}')
                       ])),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(builder: (context) =>
+                  new DetailScreen(title: '${document['name']}')),
+                );
+              },
             );
           }).toList(),
         );
       },
     );
   }
-
 }
 
 Stream<QuerySnapshot> getMerchantItems(String merchantId) {
   return Firestore.instance
       .collection("merchantItems/" + merchantId + "/items")
       .snapshots;
+}
+
+class DetailScreen extends StatelessWidget {
+
+  DetailScreen({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(title),
+        elevation: Theme
+            .of(context)
+            .platform == TargetPlatform.iOS ? 0.0 : 4.0,
+      ),
+      body: new Text(title)
+    );
+  }
 }
 
 class MyHomePage extends StatelessWidget {
