@@ -1,17 +1,12 @@
 class MerchantItem {
+  String merchantId;
   String name;
   int price;
-  String merchantId;
+  String thumbnail;
+  String imageURL;
 
-  MerchantItem(name, price, merchantId) {
-    this.name = name;
-    this.price = price;
-    this.merchantId = merchantId;
-  }
-
-  @override
-  String toString() {
-    return 'MerchantItem{name: $name, price: $price, merchantId: $merchantId}';
-  }
+  MerchantItem(merchantId, name, price, thumbnail, imageURL) : merchantId =
+      merchantId,
+        name = name, price = price, thumbnail = thumbnail, imageURL = imageURL;
 
 }

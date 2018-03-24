@@ -44,15 +44,19 @@ class MerchantItemList extends StatelessWidget {
         if (!snapshot.hasData) return const Text('Loading...');
         return new ListView(
           children: snapshot.data.documents.map((DocumentSnapshot document) {
-            MerchantItem item = new MerchantItem(document['name'],
-                document['price'], merchantId);
+            MerchantItem item = new MerchantItem(merchantId, document['name'],
+                document['price'], document['thumbnail'], document['imageURL']);
             return new GestureDetector(
               child: new Padding(
                   padding: new EdgeInsets.all(10.0),
                   child: new Column(mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new Text(item.name),
-                        new Text('${item.price}')
+                        new Text('${item.price}'),
+                        new Image.network(
+                          item.thumbnail,
+                          width: 50.0,
+                        )
                       ])),
               onTap: () {
                 Navigator.push(
@@ -90,7 +94,16 @@ class DetailScreen extends StatelessWidget {
               .of(context)
               .platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
-        body: new Text(item.name)
+        body: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text(item.name),
+            new Image.network(
+              item.imageURL,
+              width: 250.0,
+            )
+          ],
+        )
     );
   }
 }
