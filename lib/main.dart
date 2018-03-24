@@ -45,11 +45,15 @@ class MerchantItemList extends StatelessWidget {
         if (!snapshot.hasData) return const Text('Loading...');
         return new ListView(
           children: snapshot.data.documents.map((DocumentSnapshot document) {
-            return new Column(mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new Text(document['name']),
-                  new Text('${document['price']}')
-                ]);
+            return new GestureDetector(
+              child: new Padding(
+                  padding: new EdgeInsets.all(10.0),
+                  child: new Column(mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        new Text(document['name']),
+                        new Text('${document['price']}')
+                      ])),
+            );
           }).toList(),
         );
       },
