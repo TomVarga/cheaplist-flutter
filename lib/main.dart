@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cheaplist/dto/merchant_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,19 +44,21 @@ class MerchantItemList extends StatelessWidget {
         if (!snapshot.hasData) return const Text('Loading...');
         return new ListView(
           children: snapshot.data.documents.map((DocumentSnapshot document) {
+            MerchantItem item = new MerchantItem(document['name'],
+                document['price'], merchantId);
             return new GestureDetector(
               child: new Padding(
                   padding: new EdgeInsets.all(10.0),
                   child: new Column(mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        new Text(document['name']),
-                        new Text('${document['price']}')
+                        new Text(item.name),
+                        new Text('${item.price}')
                       ])),
               onTap: () {
                 Navigator.push(
                   context,
                   new MaterialPageRoute(builder: (context) =>
-                  new DetailScreen(title: '${document['name']}')),
+                  new DetailScreen(item: item)),
                 );
               },
             );
@@ -74,20 +77,20 @@ Stream<QuerySnapshot> getMerchantItems(String merchantId) {
 
 class DetailScreen extends StatelessWidget {
 
-  DetailScreen({Key key, this.title}) : super(key: key);
+  DetailScreen({Key key, this.item}) : super(key: key);
 
-  final String title;
+  final MerchantItem item;
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(title),
-        elevation: Theme
-            .of(context)
-            .platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
-      body: new Text(title)
+        appBar: new AppBar(
+          title: new Text(item.name),
+          elevation: Theme
+              .of(context)
+              .platform == TargetPlatform.iOS ? 0.0 : 4.0,
+        ),
+        body: new Text(item.name)
     );
   }
 }
