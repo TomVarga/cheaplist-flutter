@@ -33,8 +33,10 @@ class MyApp extends StatelessWidget {
 
 class MerchantItemList extends StatelessWidget {
   final String merchantId;
+  final String filter;
 
-  MerchantItemList(merchantId) : merchantId = merchantId;
+  MerchantItemList(merchantId, filter) : merchantId = merchantId, filter =
+      filter;
 
   @override
   Widget build(BuildContext context) {
@@ -43,34 +45,51 @@ class MerchantItemList extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return const Text('Loading...');
         return new ListView(
-          children: snapshot.data.documents.map((DocumentSnapshot document) {
-            MerchantItem item = new MerchantItem(merchantId, document['name'],
-                document['price'], document['thumbnail'], document['imageURL']);
-            return new GestureDetector(
-              child: new Padding(
-                  padding: new EdgeInsets.all(10.0),
-                  child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new Text(item.name),
-                        new Text('${item.price}'),
-                        new Image.network(
-                          item.thumbnail,
-                          width: 50.0,
-                        )
-                      ])),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => new DetailScreen(item: item)),
-                );
-              },
-            );
-          }).toList(),
+          children: getListItems(context, filter, snapshot.data.documents),
         );
       },
     );
+  }
+
+  List<StatelessWidget> getListItems(BuildContext context, String filter,
+      List<DocumentSnapshot> documents) {
+    List<StatelessWidget> widgets = new List<StatelessWidget>();
+    for (var document in documents) {
+      if (shouldShow(document, filter)) {
+        MerchantItem item = new MerchantItem(merchantId, document['name'],
+            document['price'], document['thumbnail'], document['imageURL']);
+        GestureDetector listItem = new GestureDetector(
+          child: new Padding(
+              padding: new EdgeInsets.all(10.0),
+              child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Text(item.name),
+                    new Text('${item.price}'),
+                    new Image.network(
+                      item.thumbnail,
+                      width: 50.0,
+                    )
+                  ])),
+          onTap: () {
+            Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => new DetailScreen(item: item)),
+            );
+          },
+        );
+        widgets.add(listItem);
+      }
+    }
+    return widgets;
+  }
+
+  bool shouldShow(DocumentSnapshot document, String filter) {
+    if (filter == null) {
+      return true;
+    }
+    return document['name'].toLowerCase().contains(filter);
   }
 }
 
@@ -121,10 +140,10 @@ class MyHomePage extends StatelessWidget {
       body: new Row(
         children: <Widget>[
           new Expanded(
-            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi"),
+            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", null),
           ),
           new Expanded(
-            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw"),
+            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw", null),
           ),
         ],
       ),
