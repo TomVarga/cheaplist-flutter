@@ -150,6 +150,12 @@ class _SearchBarDemoHomeState extends State<MyHomePage> {
 
   void onSubmitted(String value) {
     setState(() {
+      if (value == null || value == "") {
+        title = "CheapList";
+      }
+      else {
+        title = value;
+      }
       filter = value;
     });
   }
@@ -160,7 +166,8 @@ class _SearchBarDemoHomeState extends State<MyHomePage> {
         inBar: false,
         buildDefaultAppBar: buildAppBar,
         setState: setState,
-        onSubmitted: onSubmitted);
+        onSubmitted: onSubmitted,
+        clearOnSubmit: false);
   }
 
   @override
