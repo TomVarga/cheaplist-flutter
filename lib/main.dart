@@ -4,6 +4,7 @@ import 'package:cheaplist/dto/merchant_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart';
 
 final ThemeData kIOSTheme = new ThemeData(
   primarySwatch: Colors.orange,
@@ -35,8 +36,9 @@ class MerchantItemList extends StatelessWidget {
   final String merchantId;
   final String filter;
 
-  MerchantItemList(merchantId, filter) : merchantId = merchantId, filter =
-      filter;
+  MerchantItemList(merchantId, filter)
+      : merchantId = merchantId,
+        filter = filter;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +53,8 @@ class MerchantItemList extends StatelessWidget {
     );
   }
 
-  List<StatelessWidget> getListItems(BuildContext context, String filter,
-      List<DocumentSnapshot> documents) {
+  List<StatelessWidget> getListItems(
+      BuildContext context, String filter, List<DocumentSnapshot> documents) {
     List<StatelessWidget> widgets = new List<StatelessWidget>();
     for (var document in documents) {
       if (shouldShow(document, filter)) {
@@ -125,25 +127,54 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
+  _SearchBarDemoHomeState createState() => new _SearchBarDemoHomeState(title);
+}
+
+class _SearchBarDemoHomeState extends State<MyHomePage> {
+  String title;
+
+  SearchBar searchBar;
+  String filter = null;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  AppBar buildAppBar(BuildContext context) {
+    return new AppBar(
+        title: new Text(title), actions: [searchBar.getSearchAction(context)]);
+  }
+
+  void onSubmitted(String value) {
+    setState(() {
+      filter = value;
+    });
+  }
+
+  _SearchBarDemoHomeState(String title) {
+    this.title = title;
+    searchBar = new SearchBar(
+        inBar: false,
+        buildDefaultAppBar: buildAppBar,
+        setState: setState,
+        onSubmitted: onSubmitted);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(title),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
+      appBar: searchBar.build(context),
+      key: _scaffoldKey,
       body: new Row(
         children: <Widget>[
           new Expanded(
-            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", null),
+            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", filter),
           ),
           new Expanded(
-            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw", null),
+            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw", filter),
           ),
         ],
       ),
