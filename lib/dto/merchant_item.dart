@@ -1,12 +1,15 @@
 class MerchantItem {
-  String merchantId;
-  String name;
-  int price;
-  String thumbnail;
-  String imageURL;
+  final String id;
+  final String merchantId;
+  final String name;
+  final int price;
+  final String thumbnail;
+  final String imageURL;
 
-  MerchantItem(merchantId, name, price, thumbnail, imageURL) : merchantId =
-      merchantId,
-        name = name, price = price, thumbnail = thumbnail, imageURL = imageURL;
-
+  const MerchantItem({this.id,
+    this.merchantId,
+    this.name,
+    this.price,
+    this.thumbnail,
+    this.imageURL});
 }

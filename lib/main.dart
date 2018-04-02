@@ -32,6 +32,33 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class PhotoHero extends StatelessWidget {
+  const PhotoHero({Key key, this.item, this.thumbnail, this.width})
+      : super(key: key);
+
+  final MerchantItem item;
+  final double width;
+  final bool thumbnail;
+
+  Widget build(BuildContext context) {
+    return new SizedBox(
+      width: width,
+      child: new Hero(
+        tag: item.merchantId + '/' +item.id,
+        child: new Material(
+          color: Colors.transparent,
+          child: new InkWell(
+            child: new Image.network(
+              thumbnail ? item.thumbnail : item.imageURL,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class MerchantItemList extends StatelessWidget {
   final String merchantId;
   final String filter;
@@ -58,8 +85,13 @@ class MerchantItemList extends StatelessWidget {
     List<StatelessWidget> widgets = new List<StatelessWidget>();
     for (var document in documents) {
       if (shouldShow(document, filter)) {
-        MerchantItem item = new MerchantItem(merchantId, document['name'],
-            document['price'], document['thumbnail'], document['imageURL']);
+        MerchantItem item = new MerchantItem(
+            id: document['id'],
+            merchantId: merchantId,
+            name: document['name'],
+            price: document['price'],
+            thumbnail: document['thumbnail'],
+            imageURL: document['imageURL']);
         GestureDetector listItem = new GestureDetector(
           child: new Padding(
               padding: new EdgeInsets.all(10.0),
@@ -68,8 +100,9 @@ class MerchantItemList extends StatelessWidget {
                   children: <Widget>[
                     new Text(item.name),
                     new Text('${item.price}'),
-                    new Image.network(
-                      item.thumbnail,
+                    new PhotoHero(
+                      thumbnail: true,
+                      item: item,
                       width: 50.0,
                     )
                   ])),
@@ -114,17 +147,35 @@ class DetailScreen extends StatelessWidget {
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
-        body: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(item.name),
-            new Image.network(
-              item.imageURL,
-              width: 250.0,
-            )
-          ],
-        ));
+        body: new Card(
+          child: new Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _DetailViewCardTitle(item),
+              new Container(
+                padding: const EdgeInsets.all(16.0),
+                alignment: Alignment.center,
+                child: new PhotoHero(
+                  thumbnail: false,
+                  item: item,
+                  width: 200.0,
+                ),
+              )
+            ],
+
+          )
+        )
+    );
   }
+}
+
+class _DetailViewCardTitle extends ListTile {
+  _DetailViewCardTitle(MerchantItem item) :
+        super(
+          title : new Text(item.name),
+          subtitle: new Text('${item.price}'),
+      );
+
 }
 
 class MyHomePage extends StatefulWidget {
@@ -140,7 +191,7 @@ class _SearchBarDemoHomeState extends State<MyHomePage> {
   String title;
 
   SearchBar searchBar;
-  String filter = null;
+  String filter;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AppBar buildAppBar(BuildContext context) {
@@ -152,8 +203,7 @@ class _SearchBarDemoHomeState extends State<MyHomePage> {
     setState(() {
       if (value == null || value == "") {
         title = "CheapList";
-      }
-      else {
+      } else {
         title = value;
       }
       filter = value;
