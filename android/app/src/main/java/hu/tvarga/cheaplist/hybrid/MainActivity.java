@@ -1,4 +1,4 @@
-package hu.tvarga.cheaplist;
+package hu.tvarga.cheaplist.hybrid;
 
 import android.os.Bundle;
 
