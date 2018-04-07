@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cheaplist/dto/merchant_item.dart';
+import 'package:cheaplist/dto/daos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class PhotoHero extends StatelessWidget {
     return new SizedBox(
       width: width,
       child: new Hero(
-        tag: item.merchantId + '/' +item.id,
+        tag: item.merchantId + '/' + item.id,
         child: new Material(
           color: Colors.transparent,
           child: new InkWell(
@@ -85,13 +85,7 @@ class MerchantItemList extends StatelessWidget {
     List<StatelessWidget> widgets = new List<StatelessWidget>();
     for (var document in documents) {
       if (shouldShow(document, filter)) {
-        MerchantItem item = new MerchantItem(
-            id: document['id'],
-            merchantId: merchantId,
-            name: document['name'],
-            price: document['price'],
-            thumbnail: document['thumbnail'],
-            imageURL: document['imageURL']);
+        MerchantItem item = new MerchantItem(document, merchantId);
         GestureDetector listItem = new GestureDetector(
           child: new Padding(
               padding: new EdgeInsets.all(10.0),
@@ -148,34 +142,30 @@ class DetailScreen extends StatelessWidget {
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
         body: new Card(
-          child: new Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _DetailViewCardTitle(item),
-              new Container(
-                padding: const EdgeInsets.all(16.0),
-                alignment: Alignment.center,
-                child: new PhotoHero(
-                  thumbnail: false,
-                  item: item,
-                  width: 200.0,
-                ),
-              )
-            ],
-
-          )
-        )
-    );
+            child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _DetailViewCardTitle(item),
+            new Container(
+              padding: const EdgeInsets.all(16.0),
+              alignment: Alignment.center,
+              child: new PhotoHero(
+                thumbnail: false,
+                item: item,
+                width: 200.0,
+              ),
+            )
+          ],
+        )));
   }
 }
 
 class _DetailViewCardTitle extends ListTile {
-  _DetailViewCardTitle(MerchantItem item) :
-        super(
-          title : new Text(item.name),
+  _DetailViewCardTitle(MerchantItem item)
+      : super(
+          title: new Text(item.name),
           subtitle: new Text('${item.price}'),
-      );
-
+        );
 }
 
 class MyHomePage extends StatefulWidget {
