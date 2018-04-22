@@ -17,17 +17,19 @@ final ThemeData kDefaultTheme = new ThemeData(
   accentColor: Colors.orangeAccent[400],
 );
 
+const appName = 'CheapList';
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'CheapList',
+      title: appName,
       theme: defaultTargetPlatform == TargetPlatform.iOS
           ? kIOSTheme
           : kDefaultTheme,
-      home: new MyHomePage(title: 'CheapList'),
+      home: new MyHomePage(title: appName),
     );
   }
 }
@@ -137,7 +139,7 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text(item.name),
+          title: new Text(appName),
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
@@ -148,15 +150,71 @@ class DetailScreen extends StatelessWidget {
             _DetailViewCardTitle(item),
             new Container(
               padding: const EdgeInsets.all(16.0),
+              alignment: Alignment.topLeft,
+              child: new Text('${item.pricePerUnit} ${item.currency}'),
+            ),
+            new Container(
+              padding: const EdgeInsets.all(16.0),
               alignment: Alignment.center,
               child: new PhotoHero(
-                thumbnail: false,
+                thumbnail: true,
                 item: item,
                 width: 200.0,
               ),
-            )
+            ),
+//            new _NutritionInformation(item),
+            getManufacturerInformation(item)
           ],
         )));
+  }
+
+  Widget getManufacturerInformation(item) {
+    if (item.manufacturerInformation == null ||
+        item.manufacturerInformation.contact == null) {
+      return new Divider(
+        height: 1.0,
+      );
+    }
+    return new _ManufacturerInformation(item);
+  }
+}
+
+class _ManufacturerInformation extends StatelessWidget {
+  _ManufacturerInformation(this.item);
+
+  final MerchantItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Material(
+        child: new Container(
+          padding: const EdgeInsets.all(16.0),
+          alignment: Alignment.topLeft,
+          child: new Column(
+            children: <Widget>[
+              new Text("Manufacturer information"),
+              new Text('${item.manufacturerInformation.contact}')
+            ],
+          ),
+        ));
+  }
+}
+
+class _NutritionInformation extends StatelessWidget {
+  _NutritionInformation(this.item);
+
+  final MerchantItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Material(
+      child: new Column(
+        children: <Widget>[
+          new Text("Nutrition information"),
+          new Text("Energy ${item.nutritionInformation.energy}")
+        ],
+      ),
+    );
   }
 }
 
@@ -164,7 +222,7 @@ class _DetailViewCardTitle extends ListTile {
   _DetailViewCardTitle(MerchantItem item)
       : super(
           title: new Text(item.name),
-          subtitle: new Text('${item.price}'),
+    subtitle: new Text('${item.price} ${item.currency}'),
         );
 }
 
