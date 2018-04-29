@@ -17,7 +17,13 @@ final ThemeData kDefaultTheme = new ThemeData(
   accentColor: Colors.orangeAccent[400],
 );
 
-const appName = 'CheapList';
+String getAppBarHeroTag() {
+  return "appBarTag";
+}
+
+String getAppName() {
+  return 'CheapList';
+}
 
 void main() => runApp(new MyApp());
 
@@ -25,11 +31,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: appName,
+      title: getAppName(),
       theme: defaultTargetPlatform == TargetPlatform.iOS
           ? kIOSTheme
           : kDefaultTheme,
-      home: new MyHomePage(title: appName),
+      home: new MyHomePage(title: getAppName()),
     );
   }
 }
@@ -227,11 +233,7 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text(appName),
-          elevation:
-              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        ),
+        appBar: getDetailAppBar(context),
         body: new Card(
             child: new Column(
           mainAxisSize: MainAxisSize.min,
@@ -255,6 +257,23 @@ class DetailScreen extends StatelessWidget {
             getManufacturerInformation(item)
           ],
         )));
+  }
+
+  Widget getDetailAppBar(BuildContext context) {
+    return new PreferredSize(
+        child: new Hero(
+          tag: getAppBarHeroTag(),
+          child: new Material(
+            child: new AppBar(
+              title: new Text(getAppName()),
+              elevation:
+              Theme
+                  .of(context)
+                  .platform == TargetPlatform.iOS ? 0.0 : 4.0,
+            ),
+          ),
+        ),
+        preferredSize: new Size.fromHeight(kToolbarHeight));
   }
 
   Widget getManufacturerInformation(item) {
@@ -339,7 +358,7 @@ class _SearchBarHomeState extends State<MyHomePage> {
   void onSubmitted(String value) {
     setState(() {
       if (value == null || value == "") {
-        title = "CheapList";
+        title = getAppName();
       } else {
         title = value;
       }
@@ -360,7 +379,7 @@ class _SearchBarHomeState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: searchBar.build(context),
+      appBar: getMainAppBar(context),
       key: _scaffoldKey,
       body: new Row(
         children: <Widget>[
@@ -373,5 +392,16 @@ class _SearchBarHomeState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  Widget getMainAppBar(BuildContext context) {
+    return new PreferredSize(
+        child: new Hero(
+          tag: getAppBarHeroTag(),
+          child: new Material(
+            child: searchBar.build(context),
+          ),
+        ),
+        preferredSize: new Size.fromHeight(kToolbarHeight));
   }
 }
