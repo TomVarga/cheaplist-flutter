@@ -13,47 +13,25 @@ class DetailScreen extends StatefulWidget {
   _DetailState createState() => new _DetailState(item);
 }
 
-class _DetailState extends State<DetailScreen>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+class _DetailState extends State<DetailScreen> {
   var isOnShoppingList = false;
-  final MerchantItem item;
 
   _DetailState(this.item);
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = new AnimationController(
-      duration: const Duration(milliseconds: 300),
-      value: 1.0,
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  final MerchantItem item;
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: getDetailAppBar(context),
         floatingActionButton: new FloatingActionButton(
-            onPressed: () {
-              _controller.fling(velocity: (isOnShoppingList ? 1 : -1) * 2.0);
-              return setState(() {
-                isOnShoppingList = !isOnShoppingList;
-              });
-            },
-            child: new AnimatedIcon(
-              // this should be a different icon
-              // use this tool https://github.com/flutter/flutter/pull/13530/commits/98c3a23deb7cde8893accb844543d65f2c1ff43f
-              icon: AnimatedIcons.event_add,
-              progress: _controller.view,
-            )),
+            onPressed: () =>
+                setState(() {
+                  isOnShoppingList = !isOnShoppingList;
+                }),
+            child: isOnShoppingList
+                ? new Icon(Icons.remove)
+                : new Icon(Icons.add)),
         body: new SingleChildScrollView(
             child: new Card(
                 child: new Container(
