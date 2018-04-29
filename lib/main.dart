@@ -63,14 +63,33 @@ class PhotoHero extends StatelessWidget {
     );
   }
 
-  Image buildImage() {
+  Widget buildImage() {
     if (item.thumbnail == null && item.imageURL == null) {
       return new Image.asset('graphics/image-broken-variant.png');
     }
-    return new Image.network(
-      thumbnail ? item.thumbnail : item.imageURL,
-      fit: BoxFit.contain,
-    );
+    return getStack();
+  }
+
+  Widget getStack() {
+    if (thumbnail) {
+      return new Image.network(
+        item.thumbnail,
+        fit: BoxFit.contain,
+      );
+    } else {
+      return new Stack(
+        children: <Widget>[
+          new Image.network(
+            item.thumbnail,
+            fit: BoxFit.contain,
+          ),
+          new Image.network(
+            thumbnail ? item.thumbnail : item.imageURL,
+            fit: BoxFit.contain,
+          )
+        ],
+      );
+    }
   }
 }
 
@@ -248,7 +267,7 @@ class DetailScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               alignment: Alignment.center,
               child: new PhotoHero(
-                thumbnail: true,
+                thumbnail: false,
                 item: item,
                 width: 200.0,
               ),
