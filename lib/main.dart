@@ -50,13 +50,20 @@ class PhotoHero extends StatelessWidget {
         child: new Material(
           color: Colors.transparent,
           child: new InkWell(
-            child: new Image.network(
-              thumbnail ? item.thumbnail : item.imageURL,
-              fit: BoxFit.contain,
-            ),
+            child: buildImage(),
           ),
         ),
       ),
+    );
+  }
+
+  Image buildImage() {
+    if (item.thumbnail == null && item.imageURL == null) {
+      return new Image.asset('graphics/image-broken-variant.png');
+    }
+    return new Image.network(
+      thumbnail ? item.thumbnail : item.imageURL,
+      fit: BoxFit.contain,
     );
   }
 }
@@ -64,10 +71,12 @@ class PhotoHero extends StatelessWidget {
 class MerchantItemList extends StatelessWidget {
   final String merchantId;
   final String filter;
+  final bool startList;
 
-  MerchantItemList(merchantId, filter)
+  MerchantItemList(merchantId, filter, startList)
       : merchantId = merchantId,
-        filter = filter;
+        filter = filter,
+        startList = startList;
 
   @override
   Widget build(BuildContext context) {
@@ -76,32 +85,24 @@ class MerchantItemList extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return const Text('Loading...');
         return new ListView(
-          children: getListItems(context, filter, snapshot.data.documents),
+          children:
+          getListItems(context, filter, snapshot.data.documents, startList),
         );
       },
     );
   }
 
-  List<StatelessWidget> getListItems(
-      BuildContext context, String filter, List<DocumentSnapshot> documents) {
+  List<StatelessWidget> getListItems(BuildContext context, String filter,
+      List<DocumentSnapshot> documents, bool startList) {
     List<StatelessWidget> widgets = new List<StatelessWidget>();
     for (var document in documents) {
       if (shouldShow(document, filter)) {
         MerchantItem item = new MerchantItem(document, merchantId);
         GestureDetector listItem = new GestureDetector(
-          child: new Padding(
-              padding: new EdgeInsets.all(10.0),
-              child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text(item.name),
-                    new Text('${item.price}'),
-                    new PhotoHero(
-                      thumbnail: true,
-                      item: item,
-                      width: 50.0,
-                    )
-                  ])),
+          child: new Container(
+              margin: getEdgeInsets(startList),
+              color: Colors.white,
+              child: getListItem(item, startList)),
           onTap: () {
             Navigator.push(
               context,
@@ -114,6 +115,94 @@ class MerchantItemList extends StatelessWidget {
       }
     }
     return widgets;
+  }
+
+  EdgeInsets getEdgeInsets(bool startList) {
+    if (startList) {
+      return const EdgeInsets.fromLTRB(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+      );
+    } else {
+      return const EdgeInsets.fromLTRB(
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+      );
+    }
+  }
+
+  Row getListItem(MerchantItem item, bool startList) {
+    var listPerUnitPriceTextStyle =
+    new TextStyle(fontSize: 11.0, color: Colors.black.withOpacity(0.6));
+    var listPriceTextStyle =
+    new TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.6));
+    if (startList) {
+      return new Row(
+        children: <Widget>[
+          new PhotoHero(
+            thumbnail: true,
+            item: item,
+            width: 50.0,
+          ),
+          listItemTexts(
+              item, listPriceTextStyle, listPerUnitPriceTextStyle, startList)
+        ],
+      );
+    } else {
+      return new Row(
+        children: <Widget>[
+          listItemTexts(
+              item, listPriceTextStyle, listPerUnitPriceTextStyle, startList),
+          new PhotoHero(
+            thumbnail: true,
+            item: item,
+            width: 50.0,
+          ),
+        ],
+      );
+    }
+  }
+
+  Flexible listItemTexts(MerchantItem item, TextStyle listPriceTextStyle,
+      TextStyle listPerUnitPriceTextStyle, bool startList) {
+    return new Flexible(
+        child: new Container(
+          margin: const EdgeInsets.all(2.0),
+          child: new Column(
+            children: <Widget>[
+              new Align(
+                alignment: startList ? Alignment.topRight : Alignment.topLeft,
+                child: new Text(
+                  item.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: startList ? TextAlign.end : TextAlign.start,
+                ),
+              ),
+              new Align(
+                alignment: startList ? Alignment.topRight : Alignment.topLeft,
+                child: new Text(
+                  '${item.price} ${item.currency}',
+                  textAlign: startList ? TextAlign.end : TextAlign.start,
+                  style: listPriceTextStyle,
+                ),
+              ),
+              new Align(
+                alignment: startList ? Alignment.topRight : Alignment.topLeft,
+                child: new Text(
+                  '${item.pricePerUnit} ${item.currency} ${item
+                      .unit}',
+                  textAlign: startList ? TextAlign.end : TextAlign.start,
+                  style: listPerUnitPriceTextStyle,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 
   bool shouldShow(DocumentSnapshot document, String filter) {
@@ -232,10 +321,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _SearchBarDemoHomeState createState() => new _SearchBarDemoHomeState(title);
+  _SearchBarHomeState createState() => new _SearchBarHomeState(title);
 }
 
-class _SearchBarDemoHomeState extends State<MyHomePage> {
+class _SearchBarHomeState extends State<MyHomePage> {
   String title;
 
   SearchBar searchBar;
@@ -258,7 +347,7 @@ class _SearchBarDemoHomeState extends State<MyHomePage> {
     });
   }
 
-  _SearchBarDemoHomeState(String title) {
+  _SearchBarHomeState(String title) {
     this.title = title;
     searchBar = new SearchBar(
         inBar: false,
@@ -276,10 +365,10 @@ class _SearchBarDemoHomeState extends State<MyHomePage> {
       body: new Row(
         children: <Widget>[
           new Expanded(
-            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", filter),
+            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", filter, true),
           ),
           new Expanded(
-            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw", filter),
+            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw", filter, false),
           ),
         ],
       ),
