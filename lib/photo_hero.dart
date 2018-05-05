@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cheaplist/dto/daos.dart';
 import 'package:flutter/material.dart';
 
@@ -33,19 +34,19 @@ class PhotoHero extends StatelessWidget {
 
   Widget getStack() {
     if (thumbnail) {
-      return new Image.network(
-        item.thumbnail,
+      return new CachedNetworkImage(
+        imageUrl: item.thumbnail,
         fit: BoxFit.contain,
       );
     } else {
       return new Stack(
         children: <Widget>[
-          new Image.network(
-            item.thumbnail,
+          new CachedNetworkImage(
+            imageUrl: item.thumbnail,
             fit: BoxFit.contain,
           ),
-          new Image.network(
-            thumbnail ? item.thumbnail : item.imageURL,
+          new CachedNetworkImage(
+            imageUrl: thumbnail ? item.thumbnail : item.imageURL,
             fit: BoxFit.contain,
           )
         ],
