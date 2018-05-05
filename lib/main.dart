@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cheaplist/constants.dart';
 import 'package:cheaplist/detail.dart';
 import 'package:cheaplist/dto/daos.dart';
+import 'package:cheaplist/pages/splash_page.dart';
 import 'package:cheaplist/photo_hero.dart';
+import 'package:cheaplist/util/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,10 @@ class MyApp extends StatelessWidget {
       theme: defaultTargetPlatform == TargetPlatform.iOS
           ? kIOSTheme
           : kDefaultTheme,
-      home: new MyHomePage(),
+      home: new SplashPage(),
+      routes: <String, WidgetBuilder>{
+        '/lists': (BuildContext context) => new MyHomePage(),
+      },
     );
   }
 }
@@ -214,6 +219,32 @@ class _SearchBarHomeState extends State<MyHomePage> {
     return new Scaffold(
       appBar: getMainAppBar(context),
       key: _scaffoldKey,
+      drawer: new Drawer(
+        child: new ListView(
+          primary: false,
+          children: <Widget>[
+            new DrawerHeader(
+              child: new Center(
+                child: new Text(
+                  getAppName(),
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .title,
+                ),
+              ),
+            ),
+            new ListTile(
+              title: new Text('Logout', textAlign: TextAlign.right),
+              trailing: new Icon(Icons.exit_to_app),
+              onTap: () async {
+                await signOutWithGoogle();
+                Navigator.of(context).pushReplacementNamed('/');
+              },
+            ),
+          ],
+        ),
+      ),
       body: new Row(
         children: <Widget>[
           new Expanded(
