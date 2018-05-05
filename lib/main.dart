@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: defaultTargetPlatform == TargetPlatform.iOS
           ? kIOSTheme
           : kDefaultTheme,
-      home: new MyHomePage(title: getAppName()),
+      home: new MyHomePage(),
     );
   }
 }
@@ -171,16 +171,13 @@ Stream<QuerySnapshot> getMerchantItems(String merchantId) {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
 
   @override
-  _SearchBarHomeState createState() => new _SearchBarHomeState(title);
+  _SearchBarHomeState createState() => new _SearchBarHomeState();
 }
 
 class _SearchBarHomeState extends State<MyHomePage> {
-  String title;
+  String title = getAppName();
 
   SearchBar searchBar;
   String filter;
@@ -203,8 +200,7 @@ class _SearchBarHomeState extends State<MyHomePage> {
     });
   }
 
-  _SearchBarHomeState(String title) {
-    this.title = title;
+  _SearchBarHomeState() {
     searchBar = new SearchBar(
         inBar: false,
         buildDefaultAppBar: buildAppBar,
