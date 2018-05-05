@@ -9,7 +9,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 
-void main() => runApp(new MyApp());
+Future<void> main() async {
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
