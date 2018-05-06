@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:cheaplist/constants.dart';
-import 'package:cheaplist/detail.dart';
 import 'package:cheaplist/dto/daos.dart';
+import 'package:cheaplist/pages/detail.dart';
+import 'package:cheaplist/pages/settings_page.dart';
+import 'package:cheaplist/pages/shopping_list.dart';
 import 'package:cheaplist/pages/splash_page.dart';
 import 'package:cheaplist/photo_hero.dart';
-import 'package:cheaplist/util/authentication.dart';
+import 'package:cheaplist/util/drawer_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 
@@ -20,12 +21,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: getAppName(),
-      theme: defaultTargetPlatform == TargetPlatform.iOS
-          ? kIOSTheme
-          : kDefaultTheme,
+      theme: theme(context),
       home: new SplashPage(),
       routes: <String, WidgetBuilder>{
-        '/lists': (BuildContext context) => new MyHomePage(),
+        ComparePage.routeName: (BuildContext context) => new ComparePage(),
+        SettingsPage.routeName: (BuildContext context) => new SettingsPage(),
+        ShoppingList.routeName: (BuildContext context) => new ShoppingList(),
       },
     );
   }
@@ -175,13 +176,14 @@ Stream<QuerySnapshot> getMerchantItems(String merchantId) {
       .snapshots;
 }
 
-class MyHomePage extends StatefulWidget {
+class ComparePage extends StatefulWidget {
+  static const String routeName = '/compare';
 
   @override
   _SearchBarHomeState createState() => new _SearchBarHomeState();
 }
 
-class _SearchBarHomeState extends State<MyHomePage> {
+class _SearchBarHomeState extends State<ComparePage> {
   String title = getAppName();
 
   SearchBar searchBar;
@@ -190,8 +192,7 @@ class _SearchBarHomeState extends State<MyHomePage> {
 
   AppBar buildAppBar(BuildContext context) {
     return new AppBar(
-        title: new Text(title),
-        actions: [searchBar.getSearchAction(context)]);
+        title: new Text(title), actions: [searchBar.getSearchAction(context)]);
   }
 
   void onSubmitted(String value) {
@@ -219,32 +220,7 @@ class _SearchBarHomeState extends State<MyHomePage> {
     return new Scaffold(
       appBar: getMainAppBar(context),
       key: _scaffoldKey,
-      drawer: new Drawer(
-        child: new ListView(
-          primary: false,
-          children: <Widget>[
-            new DrawerHeader(
-              child: new Center(
-                child: new Text(
-                  getAppName(),
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .title,
-                ),
-              ),
-            ),
-            new ListTile(
-              title: new Text('Logout', textAlign: TextAlign.right),
-              trailing: new Icon(Icons.exit_to_app),
-              onTap: () async {
-                await signOutWithGoogle();
-                Navigator.of(context).pushReplacementNamed('/');
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: buildDrawer(context, ComparePage.routeName),
       body: new Row(
         children: <Widget>[
           new Expanded(

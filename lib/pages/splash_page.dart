@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cheaplist/main.dart';
 import 'package:cheaplist/util/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
 
     _auth.onAuthStateChanged.firstWhere((user) => user != null).then((user) {
-      Navigator.of(context).pushReplacementNamed('/lists');
+      Navigator.of(context).pushReplacementNamed(ComparePage.routeName);
     });
 
     new Future.delayed(new Duration(seconds: 1))

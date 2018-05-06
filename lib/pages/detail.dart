@@ -1,6 +1,6 @@
-import 'package:cheaplist/constants.dart';
 import 'package:cheaplist/dto/daos.dart';
 import 'package:cheaplist/photo_hero.dart';
+import 'package:cheaplist/util/drawer_builder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +23,7 @@ class _DetailState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: getDetailAppBar(context),
+        appBar: getDefaultAppBar(context),
         floatingActionButton: new FloatingActionButton(
             onPressed: () =>
                 setState(() {
@@ -78,21 +78,6 @@ class _DetailState extends State<DetailScreen> {
         item.nutritionInformation.protein != null ||
         item.nutritionInformation.carbs != null ||
         item.nutritionInformation.fat != null;
-  }
-
-  Widget getDetailAppBar(BuildContext context) {
-    return new PreferredSize(
-        child: new Hero(
-          tag: getAppBarHeroTag(),
-          child: new Material(
-            child: new AppBar(
-              title: new Text(getAppName()),
-              elevation:
-                  Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-            ),
-          ),
-        ),
-        preferredSize: new Size.fromHeight(kToolbarHeight));
   }
 
   Widget getManufacturerInformation() {
