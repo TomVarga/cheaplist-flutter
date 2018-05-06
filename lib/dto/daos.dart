@@ -53,12 +53,50 @@ class MerchantItem {
     if (document['priceHistory'] != null) {
       this.priceHistory = new List<PriceHistoryEntry>();
       for (var value in document['priceHistory']) {
-        PriceHistoryEntry priceHistoryEntry = new PriceHistoryEntry(value['t']
-            , value['price']);
+        PriceHistoryEntry priceHistoryEntry =
+        new PriceHistoryEntry(value['t'], value['price']);
         priceHistory.add(priceHistoryEntry);
       }
     }
   }
+
+  Map<String, dynamic> toMap() =>
+      {
+        'id': this.id,
+        'merchantId': this.merchantId,
+        'name': this.name,
+        'price': this.price,
+        'pricePerUnit': this.pricePerUnit,
+        'unit': this.unit,
+        'currency': this.currency,
+        'description': this.description,
+        'thumbnail': this.thumbnail,
+        'imageURL': this.imageURL,
+        'path': this.path,
+        'category': getCategoryForMap(this.category),
+        'nutritionInformation': this.nutritionInformation == null
+            ? null
+            : this.nutritionInformation.toMap(),
+        'manufacturerInformation': this.manufacturerInformation == null
+            ? null
+            : this.manufacturerInformation.toMap(),
+        'priceHistory': this.priceHistory == null
+            ? null
+            : getPriceHistoryListAsMap(this.priceHistory),
+      };
+}
+
+List<Map<String, dynamic>> getPriceHistoryListAsMap(
+    List<PriceHistoryEntry> priceHistory) {
+  List<Map<String, dynamic>> list = new List<Map<String, dynamic>>();
+  for (var value in priceHistory) {
+    list.add(value.toMap());
+  }
+  return list;
+}
+
+String getCategoryForMap(ItemCategory category) {
+  return category.toString().replaceAll("ItemCategory.", "");
 }
 
 class Merchant {
@@ -75,6 +113,13 @@ class ManufacturerInformation {
   final String contact;
 
   ManufacturerInformation(this.address, this.supplier, this.contact);
+
+  Map<String, dynamic> toMap() =>
+      {
+        'address': this.address,
+        'supplier': this.supplier,
+        'contact': this.contact,
+      };
 }
 
 class NutritionInformation {
@@ -86,6 +131,15 @@ class NutritionInformation {
 
   NutritionInformation(this.energy, this.fat, this.carbs, this.protein,
       this.salt);
+
+  Map<String, dynamic> toMap() =>
+      {
+        'energy': this.energy,
+        'fat': this.fat,
+        'carbs': this.carbs,
+        'protein': this.protein,
+        'salt': this.salt,
+      };
 }
 
 class PriceHistoryEntry {
@@ -93,6 +147,12 @@ class PriceHistoryEntry {
   final num price;
 
   PriceHistoryEntry(this.t, this.price);
+
+  Map<String, dynamic> toMap() =>
+      {
+        't': this.t,
+        'price': this.price,
+      };
 }
 
 enum ItemCategory {

@@ -1,5 +1,6 @@
 import 'package:cheaplist/dto/daos.dart';
 import 'package:cheaplist/photo_hero.dart';
+import 'package:cheaplist/shopping_list_manager.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,17 @@ class _DetailState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    startListeningToShoppingListItem();
     return new Scaffold(
         appBar: getDefaultAppBar(context),
         floatingActionButton: new FloatingActionButton(
-            onPressed: () =>
-                setState(() {
-                  isOnShoppingList = !isOnShoppingList;
-                }),
+            onPressed: () {
+              if (!isOnShoppingList) {
+                addToList(item);
+              } else {
+                removeFromList(item);
+              }
+            },
             child: isOnShoppingList
                 ? new Icon(Icons.remove)
                 : new Icon(Icons.add)),
@@ -63,6 +68,18 @@ class _DetailState extends State<DetailScreen> {
                         getManufacturerInformation()
                       ],
                     )))));
+  }
+
+  void startListeningToShoppingListItem() {
+    getShoppingListItemStream(item).listen((snapshot) =>
+        setState(() {
+          if (snapshot != null && snapshot.exists) {
+            isOnShoppingList = true;
+          }
+          else {
+            isOnShoppingList = false;
+          }
+        }));
   }
 
   Widget buildNutritionInformation() {
