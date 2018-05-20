@@ -12,6 +12,7 @@ class MerchantItem {
   String thumbnail;
   String imageURL;
   String path;
+  bool checked;
   ItemCategory category;
   NutritionInformation nutritionInformation;
   ManufacturerInformation manufacturerInformation;
@@ -20,6 +21,9 @@ class MerchantItem {
   MerchantItem(DocumentSnapshot document, String merchantId) {
     this.id = document['id'];
     this.merchantId = merchantId;
+    if (this.merchantId == null) {
+      this.merchantId = document['merchantId'];
+    }
     this.name = document['name'];
     this.price = document['price'];
     this.pricePerUnit = document['pricePerUnit'];
@@ -58,6 +62,13 @@ class MerchantItem {
         priceHistory.add(priceHistoryEntry);
       }
     }
+
+    if (document['checked'] == null) {
+      this.checked = false;
+    }
+    else {
+      this.checked = document['checked'];
+    }
   }
 
   Map<String, dynamic> toMap() =>
@@ -83,6 +94,7 @@ class MerchantItem {
         'priceHistory': this.priceHistory == null
             ? null
             : getPriceHistoryListAsMap(this.priceHistory),
+        'checked': this.checked,
       };
 }
 

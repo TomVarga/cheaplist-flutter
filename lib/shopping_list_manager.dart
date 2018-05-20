@@ -30,3 +30,13 @@ Stream<DocumentSnapshot> getShoppingListItemStream(MerchantItem item) {
       .document(item.id)
       .snapshots;
 }
+
+toggleChecked(MerchantItem item, bool newValue) {
+  item.checked = newValue;
+  Firestore.instance
+      .collection("userData")
+      .document(USER_ID)
+      .collection("shoppingList")
+      .document(item.id)
+      .setData(item.toMap());
+}
