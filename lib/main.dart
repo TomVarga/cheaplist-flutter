@@ -7,6 +7,7 @@ import 'package:cheaplist/pages/settings_page.dart';
 import 'package:cheaplist/pages/shopping_list.dart';
 import 'package:cheaplist/pages/splash_page.dart';
 import 'package:cheaplist/photo_hero.dart';
+import 'package:cheaplist/shopping_list_manager.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,17 @@ class MerchantItemList extends StatelessWidget {
               new MaterialPageRoute(
                   builder: (context) => new DetailScreen(item: item)),
             );
+          },
+          onLongPress: () {
+            final snackBar = new SnackBar(
+                content: new Text('Item added to shopping list'),
+                action: new SnackBarAction(
+                    label: "Undo",
+                    onPressed: () {
+                      removeFromList(item);
+                    }));
+            addToList(item);
+            Scaffold.of(context).showSnackBar(snackBar);
           },
         );
         widgets.add(listItem);

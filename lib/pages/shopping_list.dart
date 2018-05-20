@@ -75,18 +75,45 @@ class ShoppingListItemList extends StatelessWidget {
       MerchantItem item = new MerchantItem(document, null);
       _WidgetWithMerchantItem listItem = new _WidgetWithMerchantItem(
           item,
-          new GestureDetector(
-            child: new Container(
-                margin: new EdgeInsets.all(1.0),
-                color: Colors.white,
-                child: getListItem(item)),
-            onTap: () {
-              Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) => new DetailScreen(item: item)),
-              );
+          new Dismissible(
+            background: new Container(
+                color: Colors.redAccent,
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    new Text("Remove",
+                        style:
+                        new TextStyle(fontSize: 11.0, color: Colors.white)),
+                    new Container(
+                        margin: new EdgeInsets.all(8.0),
+                        child: new Icon(Icons.delete, color: Colors.white)),
+                  ],
+                )),
+            key: new Key('${item.id}dismissable'),
+            onDismissed: (direction) {
+              final snackBar = new SnackBar(
+                  content: new Text('Item removed from shopping list'),
+                  action: new SnackBarAction(
+                      label: "Undo",
+                      onPressed: () {
+                        addToList(item);
+                      }));
+              removeFromList(item);
+              Scaffold.of(context).showSnackBar(snackBar);
             },
+            child: new GestureDetector(
+              child: new Container(
+                  margin: new EdgeInsets.all(1.0),
+                  color: Colors.white,
+                  child: getListItem(item)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new DetailScreen(item: item)),
+                );
+              },
+            ),
           ));
       widgets.add(listItem);
     }
@@ -149,8 +176,8 @@ class ShoppingListItemList extends StatelessWidget {
     if (a.item.checked && !b.item.checked) {
       return 1;
     }
-    if (a.item.checked && b.item.checked || !a.item.checked && !b.item
-        .checked) {
+    if (a.item.checked && b.item.checked ||
+        !a.item.checked && !b.item.checked) {
       return a.item.name.compareTo(b.item.name);
     }
     return -1;
