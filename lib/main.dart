@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:cheaplist/constants.dart';
 import 'package:cheaplist/dto/daos.dart';
 import 'package:cheaplist/pages/detail.dart';
@@ -10,6 +11,7 @@ import 'package:cheaplist/photo_hero.dart';
 import 'package:cheaplist/shopping_list_manager.dart';
 import 'package:cheaplist/user_settings_manager.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
+import 'package:cheaplist/util/item_categories.dart';
 import 'package:cheaplist/util/merchants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -223,7 +225,8 @@ class _SearchBarHomeState extends State<ComparePage> {
 
   AppBar buildAppBar(BuildContext context) {
     return new AppBar(
-        title: new Text(title), actions: [searchBar.getSearchAction(context)]);
+        title: new Text(title),
+        actions: [searchBar.getSearchAction(context), getItemCategoryFilter()]);
   }
 
   void onSubmitted(String value) {
@@ -286,18 +289,30 @@ class _SearchBarHomeState extends State<ComparePage> {
   }
 
   Widget getMerchantsAsyncAndBuildLists() {
-    return new StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
-            .collection("merchants")
-            .snapshots,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    return new StreamBuilder<Object>(
+        stream: new StreamZip<Object>([
+          Firestore.instance
+              .collection("merchants")
+              .snapshots,
+          Firestore.instance
+              .collection("itemCategories")
+              .snapshots
+        ]),
+        builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
           return buildBody(snapshot);
         });
   }
 
-  Widget buildBody(AsyncSnapshot<QuerySnapshot> snapshot) {
-    if (!snapshot.hasData) return const Text('Loading...');
-    setMerchants(snapshot.data.documents);
+  Widget buildBody(AsyncSnapshot<Object> snapshot) {
+    if (snapshot == null || !snapshot.hasData) {
+      return const Text('Loading...');
+    }
+    List<Object> dataSnapshots = snapshot.data;
+    QuerySnapshot merchantsQuerySnapshot = dataSnapshots[0];
+    setMerchants(merchantsQuerySnapshot.documents);
+    QuerySnapshot itemCategoryQuerySnapshot = dataSnapshots[1];
+    setItemCategories(
+        itemCategoryQuerySnapshot.documents[0].data['itemCategories']);
     return Row(
       children: <Widget>[
         new Expanded(
@@ -308,5 +323,39 @@ class _SearchBarHomeState extends State<ComparePage> {
         ),
       ],
     );
+  }
+
+  getItemCategoryFilter() {
+    return new MaterialButton(
+        child: new Text("FILTER"),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return new AlertDialog(
+                title: new Text('Category filter'),
+                content: new ListView.builder(
+                  itemCount: getItemCategories().length,
+                  itemBuilder: (context, index) {
+                    return getFilterItem(context, index);
+                  },
+                ),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: new Text('Apply'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        });
+  }
+
+  getFilterItem(BuildContext context, int index) {
+    List<dynamic> categories = getItemCategories();
+    return new Text("${categories.elementAt(index)}");
   }
 }

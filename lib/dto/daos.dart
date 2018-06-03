@@ -41,7 +41,7 @@ class MerchantItem {
   String imageURL;
   String path;
   bool checked;
-  ItemCategory category;
+  String category;
   NutritionInformation nutritionInformation;
   ManufacturerInformation manufacturerInformation;
   List<PriceHistoryEntry> priceHistory;
@@ -61,13 +61,7 @@ class MerchantItem {
     this.thumbnail = document['thumbnail'];
     this.imageURL = document['imageURL'];
     this.path = document['path'];
-    String category = document['category'];
-    for (var value in ItemCategory.values) {
-      if ("$value" == "ItemCategory.$category") {
-        this.category = value;
-        break;
-      }
-    }
+    this.category = document['category'];
     if (document['nutritionInformation'] != null) {
       this.nutritionInformation = new NutritionInformation(
           document['nutritionInformation']['energy'],
@@ -111,7 +105,7 @@ class MerchantItem {
         'thumbnail': this.thumbnail,
         'imageURL': this.imageURL,
         'path': this.path,
-        'category': getCategoryForMap(this.category),
+        'category': this.category,
         'nutritionInformation': this.nutritionInformation == null
             ? null
             : this.nutritionInformation.toMap(),
@@ -132,10 +126,6 @@ List<Map<String, dynamic>> getPriceHistoryListAsMap(
     list.add(value.toMap());
   }
   return list;
-}
-
-String getCategoryForMap(ItemCategory category) {
-  return category.toString().replaceAll("ItemCategory.", "");
 }
 
 class Merchant {
@@ -196,20 +186,4 @@ class PriceHistoryEntry {
         't': this.t,
         'price': this.price,
       };
-}
-
-enum ItemCategory {
-  FRUIT_VEGETABLES,
-  DAIRY_EGGS,
-  BAKERY,
-  MEAT,
-  BASIC_GROCERIES,
-  DRINKS,
-  ALCOHOL,
-  FROZEN_FOOD,
-  HOME,
-  BEAUTY,
-  BABY,
-  PET,
-  HOBB,
 }
