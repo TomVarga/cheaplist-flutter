@@ -217,7 +217,7 @@ class _SearchBarHomeState extends State<ComparePage> {
       } else {
         title = value;
       }
-      filter = value;
+      filter = value.toLowerCase();
     });
   }
 
