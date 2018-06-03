@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 addToList(MerchantItem item) {
   Firestore.instance
       .collection("userData")
-      .document(USER_ID)
+      .document(userId)
       .collection("shoppingList")
       .document(item.id)
       .setData(item.toMap());
@@ -16,7 +16,7 @@ addToList(MerchantItem item) {
 removeFromList(MerchantItem item) {
   Firestore.instance
       .collection("userData")
-      .document(USER_ID)
+      .document(userId)
       .collection("shoppingList")
       .document(item.id)
       .delete();
@@ -25,7 +25,7 @@ removeFromList(MerchantItem item) {
 Stream<DocumentSnapshot> getShoppingListItemStream(MerchantItem item) {
   return Firestore.instance
       .collection("userData")
-      .document(USER_ID)
+      .document(userId)
       .collection("shoppingList")
       .document(item.id)
       .snapshots;
@@ -35,7 +35,7 @@ toggleChecked(MerchantItem item, bool newValue) {
   item.checked = newValue;
   Firestore.instance
       .collection("userData")
-      .document(USER_ID)
+      .document(userId)
       .collection("shoppingList")
       .document(item.id)
       .setData(item.toMap());

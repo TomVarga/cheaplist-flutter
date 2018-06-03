@@ -75,8 +75,7 @@ class _DetailState extends State<DetailScreen> {
         setState(() {
           if (snapshot != null && snapshot.exists) {
             isOnShoppingList = true;
-          }
-          else {
+          } else {
             isOnShoppingList = false;
           }
         }));
@@ -163,7 +162,7 @@ class _NutritionInformation extends StatelessWidget {
         new Text(name),
         new Expanded(
           child: new Text(
-            "${value}",
+            "$value",
             textAlign: TextAlign.end,
           ),
         )

@@ -63,7 +63,7 @@ class ShoppingListItemList extends StatelessWidget {
   Stream<QuerySnapshot> getShoppingListItems() {
     return Firestore.instance
         .collection("userData")
-        .document(USER_ID)
+        .document(userId)
         .collection("shoppingList")
         .snapshots;
   }
