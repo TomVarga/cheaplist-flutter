@@ -51,74 +51,90 @@ class MerchantItemList extends StatelessWidget {
       stream: getMerchantItems(merchantId),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return const Text('Loading...');
+        List<DocumentSnapshot> filteredDocuments =
+        filterDocuments(snapshot.data.documents);
+
         return ListView.builder(
+          itemCount: filteredDocuments.length,
           itemBuilder: (context, index) {
             return getListItemForIndex(
-                index, context, filter, snapshot.data.documents, startList);
+                index, context, filter, filteredDocuments, startList);
           },
         );
       },
     );
   }
 
+  List<DocumentSnapshot> filterDocuments(List<DocumentSnapshot> documents) {
+    List<DocumentSnapshot> filteredDocuments = new List();
+    for (var document in documents) {
+      if (shouldShow(document, filter)) {
+        filteredDocuments.add(document);
+      }
+    }
+    return filteredDocuments;
+  }
+
   Widget getListItemForIndex(int index, BuildContext context, String filter,
       List<DocumentSnapshot> documents, bool startList) {
     DocumentSnapshot document = documents[index];
-    if (shouldShow(document, filter)) {
-      MerchantItem item = new MerchantItem(document, merchantId);
-      InkWell listItem = new InkWell(
-        child: new Container(
-          margin: getEdgeInsets(startList),
-          child:
-          new Ink(color: Colors.white, child: getListItem(item, startList)),
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) => new DetailScreen(item: item)),
-          );
-        },
-        onLongPress: () {
-          final snackBar = new SnackBar(
-              content: new Text('Item added to shopping list'),
-              action: new SnackBarAction(
-                  label: "Undo",
-                  onPressed: () {
-                    removeFromList(item);
-                  }));
-          addToList(item);
-          Scaffold.of(context).showSnackBar(snackBar);
-        },
-      );
-      return listItem;
-    }
-    return Container();
+    MerchantItem item = new MerchantItem(document, merchantId);
+    InkWell listItem = new InkWell(
+      child: new Container(
+        margin: getEdgeInsets(startList),
+        child:
+        new Ink(color: Colors.white, child: getListItem(item, startList)),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (context) => new DetailScreen(item: item)),
+        );
+      },
+      onLongPress: () {
+        final snackBar = new SnackBar(
+            content: new Text('Item added to shopping list'),
+            action: new SnackBarAction(
+                label: "Undo",
+                onPressed: () {
+                  removeFromList(item);
+                }));
+        addToList(item);
+        Scaffold.of(context).showSnackBar(snackBar);
+      },
+    );
+    return listItem;
   }
+
+  final startInsets = const EdgeInsets.fromLTRB(
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+  );
+
+  final endInsets = const EdgeInsets.fromLTRB(
+    1.0,
+    1.0,
+    0.0,
+    1.0,
+  );
 
   EdgeInsets getEdgeInsets(bool startList) {
     if (startList) {
-      return const EdgeInsets.fromLTRB(
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-      );
+      return startInsets;
     } else {
-      return const EdgeInsets.fromLTRB(
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-      );
+      return endInsets;
     }
   }
 
+  final listPerUnitPriceTextStyle =
+  new TextStyle(fontSize: 11.0, color: Colors.black.withOpacity(0.6));
+  final listPriceTextStyle =
+  new TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.6));
+
   Row getListItem(MerchantItem item, bool startList) {
-    var listPerUnitPriceTextStyle =
-    new TextStyle(fontSize: 11.0, color: Colors.black.withOpacity(0.6));
-    var listPriceTextStyle =
-    new TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.6));
     if (startList) {
       return new Row(
         children: <Widget>[
