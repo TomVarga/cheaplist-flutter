@@ -101,11 +101,11 @@ class ShoppingListItemList extends StatelessWidget {
               removeFromList(item);
               Scaffold.of(context).showSnackBar(snackBar);
             },
-            child: new GestureDetector(
+            child: new InkWell(
               child: new Container(
                   margin: new EdgeInsets.all(1.0),
-                  color: Colors.white,
-                  child: getListItem(item)),
+                  child:
+                  new Ink(color: Colors.white, child: getListItem(item))),
               onTap: () {
                 Navigator.push(
                   context,

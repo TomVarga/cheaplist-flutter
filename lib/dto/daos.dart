@@ -1,5 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class UserSetting {
+  String id;
+}
+
+class CheckedUserSetting extends UserSetting {
+  bool checked;
+
+  CheckedUserSetting(DocumentSnapshot document) {
+    if (document.data != null) {
+      this.id = document['id'];
+      if (document['checked'] == null) {
+        this.checked = false;
+      } else {
+        this.checked = document['checked'];
+      }
+    }
+    else {
+      this.checked = false;
+    }
+  }
+
+  Map<String, dynamic> toMap() =>
+      {
+        'id': this.id,
+        'checked': this.checked,
+      };
+}
+
 class MerchantItem {
   String id;
   String merchantId;
@@ -65,8 +93,7 @@ class MerchantItem {
 
     if (document['checked'] == null) {
       this.checked = false;
-    }
-    else {
+    } else {
       this.checked = document['checked'];
     }
   }

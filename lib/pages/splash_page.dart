@@ -18,6 +18,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
 
     _auth.onAuthStateChanged.firstWhere((user) => user != null).then((user) {
+      userId = user.uid;
       Navigator.of(context).pushReplacementNamed(ComparePage.routeName);
     });
 

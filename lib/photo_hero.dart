@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cheaplist/dto/daos.dart';
+import 'package:cheaplist/user_settings_manager.dart';
 import 'package:flutter/material.dart';
 
 class PhotoHero extends StatelessWidget {
@@ -26,8 +27,11 @@ class PhotoHero extends StatelessWidget {
   }
 
   Widget buildImage() {
+    if (imageDownloadingDisabled) {
+      return new Icon(Icons.image);
+    }
     if (item.thumbnail == null && item.imageURL == null) {
-      return new Image.asset('graphics/image-broken-variant.png');
+      return new Icon(Icons.broken_image);
     }
     return getStack();
   }

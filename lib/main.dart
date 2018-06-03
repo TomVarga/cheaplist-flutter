@@ -8,6 +8,7 @@ import 'package:cheaplist/pages/shopping_list.dart';
 import 'package:cheaplist/pages/splash_page.dart';
 import 'package:cheaplist/photo_hero.dart';
 import 'package:cheaplist/shopping_list_manager.dart';
+import 'package:cheaplist/user_settings_manager.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -57,17 +58,18 @@ class MerchantItemList extends StatelessWidget {
     );
   }
 
-  List<StatelessWidget> getListItems(BuildContext context, String filter,
+  List<StatefulWidget> getListItems(BuildContext context, String filter,
       List<DocumentSnapshot> documents, bool startList) {
-    List<StatelessWidget> widgets = new List<StatelessWidget>();
+    List<StatefulWidget> widgets = new List<StatefulWidget>();
     for (var document in documents) {
       if (shouldShow(document, filter)) {
         MerchantItem item = new MerchantItem(document, merchantId);
-        GestureDetector listItem = new GestureDetector(
+        InkWell listItem = new InkWell(
           child: new Container(
-              margin: getEdgeInsets(startList),
-              color: Colors.white,
-              child: getListItem(item, startList)),
+            margin: getEdgeInsets(startList),
+            child: new Ink(
+                color: Colors.white, child: getListItem(item, startList)),
+          ),
           onTap: () {
             Navigator.push(
               context,
@@ -233,16 +235,30 @@ class _SearchBarHomeState extends State<ComparePage> {
       appBar: getMainAppBar(context),
       key: _scaffoldKey,
       drawer: buildDrawer(context, ComparePage.routeName),
-      body: new Row(
-        children: <Widget>[
-          new Expanded(
-            child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", filter, true),
-          ),
-          new Expanded(
-            child: new MerchantItemList("oS53CrXawnyVOXVf6VKw", filter, false),
-          ),
-        ],
-      ),
+      body: getCompareBody(),
+    );
+  }
+
+  Widget getCompareBody() {
+    return new StreamBuilder<DocumentSnapshot>(
+      stream: getSetting(IMAGE_DOWNLOADING_DISABLED),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (!snapshot.hasData) return const Text('Loading...');
+        imageDownloadingDisabled =
+            new CheckedUserSetting(snapshot.data).checked;
+        return Row(
+          children: <Widget>[
+            new Expanded(
+              child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", filter, true),
+            ),
+            new Expanded(
+              child:
+              new MerchantItemList("oS53CrXawnyVOXVf6VKw", filter, false),
+            ),
+          ],
+        );
+      },
     );
   }
 
