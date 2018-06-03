@@ -15,7 +15,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 
-
 Future<void> main() async {
   runApp(new MyApp());
 }
@@ -223,11 +222,16 @@ class _SearchBarHomeState extends State<ComparePage> {
   }
 
   _SearchBarHomeState() {
+    var textEditingController = new TextEditingController();
+    textEditingController.addListener(() {
+      onSubmitted(textEditingController.text);
+    });
     searchBar = new SearchBar(
         inBar: false,
         buildDefaultAppBar: buildAppBar,
         setState: setState,
         onSubmitted: onSubmitted,
+        controller: textEditingController,
         clearOnSubmit: false);
   }
 
@@ -290,4 +294,3 @@ class _SearchBarHomeState extends State<ComparePage> {
     );
   }
 }
-
