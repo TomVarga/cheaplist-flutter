@@ -51,49 +51,49 @@ class MerchantItemList extends StatelessWidget {
       stream: getMerchantItems(merchantId),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) return const Text('Loading...');
-        return new ListView(
-          children:
-          getListItems(context, filter, snapshot.data.documents, startList),
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            return getListItemForIndex(
+                index, context, filter, snapshot.data.documents, startList);
+          },
         );
       },
     );
   }
 
-  List<StatefulWidget> getListItems(BuildContext context, String filter,
+  Widget getListItemForIndex(int index, BuildContext context, String filter,
       List<DocumentSnapshot> documents, bool startList) {
-    List<StatefulWidget> widgets = new List<StatefulWidget>();
-    for (var document in documents) {
-      if (shouldShow(document, filter)) {
-        MerchantItem item = new MerchantItem(document, merchantId);
-        InkWell listItem = new InkWell(
-          child: new Container(
-            margin: getEdgeInsets(startList),
-            child: new Ink(
-                color: Colors.white, child: getListItem(item, startList)),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) => new DetailScreen(item: item)),
-            );
-          },
-          onLongPress: () {
-            final snackBar = new SnackBar(
-                content: new Text('Item added to shopping list'),
-                action: new SnackBarAction(
-                    label: "Undo",
-                    onPressed: () {
-                      removeFromList(item);
-                    }));
-            addToList(item);
-            Scaffold.of(context).showSnackBar(snackBar);
-          },
-        );
-        widgets.add(listItem);
-      }
+    DocumentSnapshot document = documents[index];
+    if (shouldShow(document, filter)) {
+      MerchantItem item = new MerchantItem(document, merchantId);
+      InkWell listItem = new InkWell(
+        child: new Container(
+          margin: getEdgeInsets(startList),
+          child:
+          new Ink(color: Colors.white, child: getListItem(item, startList)),
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) => new DetailScreen(item: item)),
+          );
+        },
+        onLongPress: () {
+          final snackBar = new SnackBar(
+              content: new Text('Item added to shopping list'),
+              action: new SnackBarAction(
+                  label: "Undo",
+                  onPressed: () {
+                    removeFromList(item);
+                  }));
+          addToList(item);
+          Scaffold.of(context).showSnackBar(snackBar);
+        },
+      );
+      return listItem;
     }
-    return widgets;
+    return Container();
   }
 
   EdgeInsets getEdgeInsets(bool startList) {
