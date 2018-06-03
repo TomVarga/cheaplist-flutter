@@ -139,11 +139,15 @@ String getCategoryForMap(ItemCategory category) {
 }
 
 class Merchant {
-  final String id;
-  final String name;
-  final String website;
+  String id;
+  String name;
+  String website;
 
-  Merchant(this.id, this.name, this.website);
+  Merchant(DocumentSnapshot document) {
+    this.id = document['id'];
+    this.name = document['name'];
+    this.website = document['website'];
+  }
 }
 
 class ManufacturerInformation {

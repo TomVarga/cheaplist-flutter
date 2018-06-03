@@ -6,6 +6,7 @@ import 'package:cheaplist/photo_hero.dart';
 import 'package:cheaplist/shopping_list_manager.dart';
 import 'package:cheaplist/util/authentication.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
+import 'package:cheaplist/util/merchants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -121,11 +122,14 @@ class ShoppingListItemList extends StatelessWidget {
     return widgets;
   }
 
+  final listPerUnitPriceTextStyle =
+  new TextStyle(fontSize: 11.0, color: Colors.black.withOpacity(0.6));
+  final listPriceTextStyle =
+  new TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.6));
+  final listMerchantTextStyle =
+  new TextStyle(fontSize: 12.0, color: Colors.black.withOpacity(0.8));
+
   Widget getListItem(MerchantItem item) {
-    var listPerUnitPriceTextStyle =
-    new TextStyle(fontSize: 11.0, color: Colors.black.withOpacity(0.6));
-    var listPriceTextStyle =
-    new TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.6));
     return new Row(
       children: <Widget>[
         new Checkbox(
@@ -133,7 +137,7 @@ class ShoppingListItemList extends StatelessWidget {
             onChanged: (newValue) {
               toggleChecked(item, newValue);
             }),
-        listItemTexts(item, listPriceTextStyle, listPerUnitPriceTextStyle),
+        listItemTexts(item),
         new PhotoHero(
           thumbnail: true,
           item: item,
@@ -143,8 +147,7 @@ class ShoppingListItemList extends StatelessWidget {
     );
   }
 
-  Widget listItemTexts(MerchantItem item, TextStyle listPriceTextStyle,
-      TextStyle listPerUnitPriceTextStyle) {
+  Widget listItemTexts(MerchantItem item) {
     return new Expanded(
         child: new Container(
           margin: const EdgeInsets.all(2.0),
@@ -166,6 +169,11 @@ class ShoppingListItemList extends StatelessWidget {
                     .unit}',
                 textAlign: TextAlign.start,
                 style: listPerUnitPriceTextStyle,
+              ),
+              new Text(
+                '${getMerchant(item.merchantId).name}',
+                textAlign: TextAlign.start,
+                style: listMerchantTextStyle,
               ),
             ],
           ),

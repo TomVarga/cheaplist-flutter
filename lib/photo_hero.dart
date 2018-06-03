@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cheaplist/constants.dart';
 import 'package:cheaplist/dto/daos.dart';
 import 'package:cheaplist/user_settings_manager.dart';
 import 'package:flutter/material.dart';
@@ -19,19 +20,22 @@ class PhotoHero extends StatelessWidget {
         child: new Material(
           color: Colors.transparent,
           child: new InkWell(
-            child: buildImage(),
+            child: buildImage(context),
           ),
         ),
       ),
     );
   }
 
-  Widget buildImage() {
+  Widget buildImage(BuildContext context) {
     if (imageDownloadingDisabled) {
-      return new Icon(Icons.image);
+      return new Icon(
+        Icons.image,
+        color: theme(context).accentColor,
+      );
     }
     if (item.thumbnail == null && item.imageURL == null) {
-      return new Icon(Icons.broken_image);
+      return new Icon(Icons.broken_image, color: theme(context).accentColor);
     }
     return getStack();
   }

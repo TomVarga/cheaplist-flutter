@@ -10,9 +10,11 @@ import 'package:cheaplist/photo_hero.dart';
 import 'package:cheaplist/shopping_list_manager.dart';
 import 'package:cheaplist/user_settings_manager.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
+import 'package:cheaplist/util/merchants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
+
 
 Future<void> main() async {
   runApp(new MyApp());
@@ -247,17 +249,7 @@ class _SearchBarHomeState extends State<ComparePage> {
         if (!snapshot.hasData) return const Text('Loading...');
         imageDownloadingDisabled =
             new CheckedUserSetting(snapshot.data).checked;
-        return Row(
-          children: <Widget>[
-            new Expanded(
-              child: new MerchantItemList("3QFbXk5gw0KXfNCZTiOi", filter, true),
-            ),
-            new Expanded(
-              child:
-              new MerchantItemList("oS53CrXawnyVOXVf6VKw", filter, false),
-            ),
-          ],
-        );
+        return getMerchantsAsyncAndBuildLists();
       },
     );
   }
@@ -272,4 +264,30 @@ class _SearchBarHomeState extends State<ComparePage> {
         ),
         preferredSize: new Size.fromHeight(kToolbarHeight));
   }
+
+  Widget getMerchantsAsyncAndBuildLists() {
+    return new StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance
+            .collection("merchants")
+            .snapshots,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          return buildBody(snapshot);
+        });
+  }
+
+  Widget buildBody(AsyncSnapshot<QuerySnapshot> snapshot) {
+    if (!snapshot.hasData) return const Text('Loading...');
+    setMerchants(snapshot.data.documents);
+    return Row(
+      children: <Widget>[
+        new Expanded(
+          child: new MerchantItemList(firstMerchant.id, filter, true),
+        ),
+        new Expanded(
+          child: new MerchantItemList(secondMerchant.id, filter, false),
+        ),
+      ],
+    );
+  }
 }
+
