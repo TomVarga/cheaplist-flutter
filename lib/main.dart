@@ -296,7 +296,12 @@ class _SearchBarHomeState extends State<ComparePage> {
               .snapshots,
           Firestore.instance
               .collection("itemCategories")
-              .snapshots
+              .snapshots,
+//          Firestore.instance
+//              .collection("userData")
+//              .document(userId)
+//              .collection("categoriesFilterForUser")
+//              .snapshots
         ]),
         builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
           return buildBody(snapshot);
@@ -332,18 +337,24 @@ class _SearchBarHomeState extends State<ComparePage> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
+              List<dynamic> categories = getItemCategories();
+
+              Map<dynamic, bool> categoryToggleMap = Map.fromIterable(
+                  categories,
+                  key: (item) => item, value: (item) => false);
+
               return new AlertDialog(
                 title: new Text('Category filter'),
-                content: new ListView.builder(
-                  itemCount: getItemCategories().length,
-                  itemBuilder: (context, index) {
-                    return getFilterItem(context, index);
-                  },
+                content: new SingleChildScrollView(
+                  child: new Column(
+                    children: getFilterItems(categories, categoryToggleMap),
+                  ),
                 ),
                 actions: <Widget>[
                   new FlatButton(
                     child: new Text('Apply'),
                     onPressed: () {
+                      print(categoryToggleMap);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -354,8 +365,56 @@ class _SearchBarHomeState extends State<ComparePage> {
         });
   }
 
-  getFilterItem(BuildContext context, int index) {
-    List<dynamic> categories = getItemCategories();
-    return new Text("${categories.elementAt(index)}");
+  getFilterItems(List<dynamic> categories, Map<dynamic, bool>
+  categoryToggleMap) {
+    List<Widget> widgets = new List();
+    for (var category in categories) {
+      widgets.add(new FilterItem(
+          categoryToggleMap: categoryToggleMap, category: category));
+    }
+    return widgets;
+  }
+}
+
+class FilterItem extends StatefulWidget {
+  final Map<dynamic, bool> categoryToggleMap;
+
+  final dynamic category;
+
+  @override
+  State<StatefulWidget> createState() =>
+      new _FilterItemState(categoryToggleMap, category);
+
+  FilterItem({Key key, this.categoryToggleMap, this.category})
+      : super(key: key);
+}
+
+class _FilterItemState extends State<FilterItem> {
+  Map<dynamic, bool> categoryToggleMap;
+  dynamic category;
+
+  _FilterItemState(this.categoryToggleMap, this.category);
+
+  @override
+  Widget build(BuildContext context) {
+    return new InkWell(
+      onTap: () {
+        setState(() {
+          categoryToggleMap[category] = !categoryToggleMap[category];
+        });
+      },
+      child: new Row(
+        children: <Widget>[
+          new Checkbox(
+              value: categoryToggleMap[category],
+              onChanged: (newValue) {
+                setState(() {
+                  categoryToggleMap[category] = newValue;
+                });
+              }),
+          new Text("$category")
+        ],
+      ),
+    );
   }
 }

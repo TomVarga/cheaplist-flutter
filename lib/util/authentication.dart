@@ -35,7 +35,7 @@ Future<FirebaseUser> signInWithGoogle() async {
   final FirebaseUser firebaseCurrentUser = await _auth.currentUser();
   assert(user.uid == firebaseCurrentUser.uid);
   userId = user.uid;
-
+  print("userId $userId");
   return user;
 }
 
