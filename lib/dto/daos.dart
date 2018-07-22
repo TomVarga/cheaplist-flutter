@@ -15,8 +15,7 @@ class CheckedUserSetting extends UserSetting {
       } else {
         this.checked = document['checked'];
       }
-    }
-    else {
+    } else {
       this.checked = false;
     }
   }
@@ -187,3 +186,36 @@ class PriceHistoryEntry {
         'price': this.price,
       };
 }
+
+//class UserCategoryFilterListItem {
+//  final String category;
+//  final bool checked;
+//
+//  UserCategoryFilterListItem(this.category, this.checked);
+//
+//  Map<String, dynamic> toMap() => {
+//        'category': this.category,
+//        'checked': this.checked,
+//      };
+//}
+//
+//class UserCategoryFilterListItems {
+//  final List<UserCategoryFilterListItem> userCategoryFilterListItems;
+//
+//  UserCategoryFilterListItems(this.userCategoryFilterListItems);
+//
+//  Map<String, dynamic> toMap() => {
+//        'userCategoryFilterListItems': this.userCategoryFilterListItems == null
+//            ? null
+//      : getUserCategoryFilterListItemsListAsMap(this.userCategoryFilterListItems),
+//      };
+//}
+//
+//List<Map<String, dynamic>> getUserCategoryFilterListItemsListAsMap(
+//    List<UserCategoryFilterListItem> list) {
+//  List<Map<String, dynamic>> list = new List<Map<String, dynamic>>();
+//  for (var value in list) {
+//    list.add(value.toMap());
+//  }
+//  return list;
+//}

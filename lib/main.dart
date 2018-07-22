@@ -10,6 +10,7 @@ import 'package:cheaplist/pages/splash_page.dart';
 import 'package:cheaplist/photo_hero.dart';
 import 'package:cheaplist/shopping_list_manager.dart';
 import 'package:cheaplist/user_settings_manager.dart';
+import 'package:cheaplist/util/authentication.dart';
 import 'package:cheaplist/util/drawer_builder.dart';
 import 'package:cheaplist/util/item_categories.dart';
 import 'package:cheaplist/util/merchants.dart';
@@ -297,11 +298,11 @@ class _SearchBarHomeState extends State<ComparePage> {
           Firestore.instance
               .collection("itemCategories")
               .snapshots,
-//          Firestore.instance
-//              .collection("userData")
-//              .document(userId)
-//              .collection("categoriesFilterForUser")
-//              .snapshots
+          Firestore.instance
+              .collection("userData")
+              .document("$userId")
+              .collection("categoriesFilterForUser")
+              .snapshots
         ]),
         builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
           return buildBody(snapshot);
@@ -318,6 +319,8 @@ class _SearchBarHomeState extends State<ComparePage> {
     QuerySnapshot itemCategoryQuerySnapshot = dataSnapshots[1];
     setItemCategories(
         itemCategoryQuerySnapshot.documents[0].data['itemCategories']);
+    QuerySnapshot itemCategoryFilterQuerySnapshot = dataSnapshots[2];
+    setItemCategoriesFilter(itemCategoryFilterQuerySnapshot.documents[0].data);
     return Row(
       children: <Widget>[
         new Expanded(
@@ -339,9 +342,14 @@ class _SearchBarHomeState extends State<ComparePage> {
             builder: (BuildContext context) {
               List<dynamic> categories = getItemCategories();
 
-              Map<dynamic, bool> categoryToggleMap = Map.fromIterable(
-                  categories,
-                  key: (item) => item, value: (item) => false);
+              Map<dynamic, bool> categoryToggleMap =
+              Map.fromIterable(categories,
+                  key: (item) => item,
+                  value: (item) {
+                    Map<String, bool> itemCategoriesFilter =
+                    getItemCategoriesFilter();
+                    return itemCategoriesFilter[item];
+                  });
 
               return new AlertDialog(
                 title: new Text('Category filter'),
@@ -354,7 +362,13 @@ class _SearchBarHomeState extends State<ComparePage> {
                   new FlatButton(
                     child: new Text('Apply'),
                     onPressed: () {
-                      print(categoryToggleMap);
+                      setItemCategoriesFilter(Map.castFrom(categoryToggleMap));
+                      Firestore.instance
+                          .collection("userData")
+                          .document(userId)
+                          .collection("categoriesFilterForUser")
+                          .document("categoriesFilterForUser")
+                          .setData(Map.castFrom(categoryToggleMap));
                       Navigator.of(context).pop();
                     },
                   ),
@@ -365,8 +379,8 @@ class _SearchBarHomeState extends State<ComparePage> {
         });
   }
 
-  getFilterItems(List<dynamic> categories, Map<dynamic, bool>
-  categoryToggleMap) {
+  getFilterItems(List<dynamic> categories,
+      Map<dynamic, bool> categoryToggleMap) {
     List<Widget> widgets = new List();
     for (var category in categories) {
       widgets.add(new FilterItem(
