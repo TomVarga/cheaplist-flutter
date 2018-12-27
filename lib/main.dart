@@ -207,7 +207,7 @@ class MerchantItemList extends StatelessWidget {
 Stream<QuerySnapshot> getMerchantItems(String merchantId) {
   return Firestore.instance
       .collection("merchantItems/" + merchantId + "/items")
-      .snapshots as Stream<QuerySnapshot>;
+      .snapshots();
 }
 
 class ComparePage extends StatefulWidget {
@@ -294,15 +294,15 @@ class _SearchBarHomeState extends State<ComparePage> {
         stream: new StreamZip<Object>([
           Firestore.instance
               .collection("merchants")
-              .snapshots as Stream<QuerySnapshot>,
+              .snapshots(),
           Firestore.instance
               .collection("itemCategories")
-              .snapshots as Stream<QuerySnapshot>,
+              .snapshots(),
           Firestore.instance
               .collection("userData")
               .document("$userId")
               .collection("categoriesFilterForUser")
-              .snapshots as Stream<QuerySnapshot>
+              .snapshots()
         ]),
         builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
           return buildBody(snapshot);
@@ -317,10 +317,7 @@ class _SearchBarHomeState extends State<ComparePage> {
     QuerySnapshot merchantsQuerySnapshot = dataSnapshots[0];
     setMerchants(merchantsQuerySnapshot.documents);
     QuerySnapshot itemCategoryQuerySnapshot = dataSnapshots[1];
-    setItemCategories(
-        itemCategoryQuerySnapshot.documents[0].data['itemCategories']);
-    QuerySnapshot itemCategoryFilterQuerySnapshot = dataSnapshots[2];
-    setItemCategoriesFilter(itemCategoryFilterQuerySnapshot.documents[0].data);
+    setInitialItemCategoriesFilter(itemCategoryQuerySnapshot, dataSnapshots);
     return Row(
       children: <Widget>[
         new Expanded(
@@ -331,6 +328,25 @@ class _SearchBarHomeState extends State<ComparePage> {
         ),
       ],
     );
+  }
+
+  void setInitialItemCategoriesFilter(QuerySnapshot itemCategoryQuerySnapshot,
+      List<Object> dataSnapshots) {
+    var itemCategories = itemCategoryQuerySnapshot.documents[0]
+        .data['itemCategories'];
+    setItemCategories(itemCategories);
+    QuerySnapshot itemCategoryFilterQuerySnapshot = dataSnapshots[2];
+    if (itemCategoryFilterQuerySnapshot.documents == null ||
+        itemCategoryFilterQuerySnapshot.documents.isEmpty) {
+      Map<String, bool> defaultFilter = new Map.fromIterable(itemCategories,
+          key: (item) => item.toString(),
+          value: (item) => true);
+      setItemCategoriesFilter(defaultFilter);
+    }
+    else {
+      setItemCategoriesFilter(
+          itemCategoryFilterQuerySnapshot.documents[0].data);
+    }
   }
 
   getItemCategoryFilter() {

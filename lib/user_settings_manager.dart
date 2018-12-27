@@ -22,5 +22,5 @@ getSetting(String name) {
       .document(userId)
       .collection("userSettings")
       .document(name)
-      .snapshots;
+      .snapshots();
 }
