@@ -28,7 +28,7 @@ Stream<DocumentSnapshot> getShoppingListItemStream(MerchantItem item) {
       .document(userId)
       .collection("shoppingList")
       .document(item.id)
-      .snapshots;
+      .snapshots as Stream<DocumentSnapshot>;
 }
 
 toggleChecked(MerchantItem item, bool newValue) {

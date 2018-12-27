@@ -207,7 +207,7 @@ class MerchantItemList extends StatelessWidget {
 Stream<QuerySnapshot> getMerchantItems(String merchantId) {
   return Firestore.instance
       .collection("merchantItems/" + merchantId + "/items")
-      .snapshots;
+      .snapshots as Stream<QuerySnapshot>;
 }
 
 class ComparePage extends StatefulWidget {
@@ -294,15 +294,15 @@ class _SearchBarHomeState extends State<ComparePage> {
         stream: new StreamZip<Object>([
           Firestore.instance
               .collection("merchants")
-              .snapshots,
+              .snapshots as Stream<QuerySnapshot>,
           Firestore.instance
               .collection("itemCategories")
-              .snapshots,
+              .snapshots as Stream<QuerySnapshot>,
           Firestore.instance
               .collection("userData")
               .document("$userId")
               .collection("categoriesFilterForUser")
-              .snapshots
+              .snapshots as Stream<QuerySnapshot>
         ]),
         builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
           return buildBody(snapshot);

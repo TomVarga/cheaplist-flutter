@@ -66,7 +66,7 @@ class ShoppingListItemList extends StatelessWidget {
         .collection("userData")
         .document(userId)
         .collection("shoppingList")
-        .snapshots;
+        .snapshots as Stream<QuerySnapshot>;
   }
 
   List<_WidgetWithMerchantItem> getListItems(BuildContext context,
