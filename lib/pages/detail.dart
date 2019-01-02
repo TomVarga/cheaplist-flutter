@@ -83,7 +83,7 @@ class _DetailState extends State<DetailScreen> {
 
   Widget buildNutritionInformation() {
     if (item.nutritionInformation == null || !hasNutritionInformationData()) {
-      return new Container();
+      return new Text("");
     }
     return new _NutritionInformation(item);
   }
@@ -97,9 +97,8 @@ class _DetailState extends State<DetailScreen> {
   }
 
   Widget getManufacturerInformation() {
-    if (item.manufacturerInformation == null ||
-        item.manufacturerInformation.contact == null) {
-      return new Container();
+    if (item.manufacturerInformation == null) {
+      return new Text("");
     }
     return new _ManufacturerInformation(item);
   }
@@ -117,9 +116,21 @@ class _ManufacturerInformation extends StatelessWidget {
       children: <Widget>[
         new Text("Manufacturer information",
             style: new TextStyle(fontSize: 18.0)),
-        new Text("${item.manufacturerInformation.contact}"),
+        new Text(getManufacturerInformation()),
       ],
     );
+  }
+
+  String getManufacturerInformation() {
+    String manufacturerInformation = "";
+    if (item.manufacturerInformation.supplier != null) {
+      manufacturerInformation = item.manufacturerInformation.supplier;
+    }
+    if (item.manufacturerInformation.contact != null) {
+      manufacturerInformation = manufacturerInformation + "\n" + item
+          .manufacturerInformation.contact;
+    }
+    return manufacturerInformation;
   }
 }
 
@@ -146,7 +157,7 @@ class _NutritionInformation extends StatelessWidget {
 
   Widget getNutritionInformationRow(String name, num value) {
     if (value == null) {
-      return new Container();
+      return new Text("");
     }
     return new Column(
       children: <Widget>[

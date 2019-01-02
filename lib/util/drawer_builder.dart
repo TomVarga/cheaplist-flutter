@@ -62,7 +62,7 @@ Widget getDrawerHeader(context) {
         future: _auth.currentUser(),
         builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
           if (snapshot.hasError || snapshot.data == null) {
-            return new Container();
+            return new Text("");
           } else {
             return new Container(
                 margin: const EdgeInsets.all(8.0),
