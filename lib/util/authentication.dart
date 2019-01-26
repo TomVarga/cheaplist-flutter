@@ -22,11 +22,13 @@ Future<FirebaseUser> signInWithGoogle() async {
 
   final GoogleSignInAuthentication auth = await currentUser.authentication;
 
-  // Authenticate with firebase
-  final FirebaseUser user = await _auth.signInWithGoogle(
-    idToken: auth.idToken,
+  final AuthCredential credential = GoogleAuthProvider.getCredential(
     accessToken: auth.accessToken,
+    idToken: auth.idToken,
   );
+
+  // Authenticate with firebase
+  final FirebaseUser user = await _auth.signInWithCredential(credential);
 
   assert(user != null);
   assert(!user.isAnonymous);
