@@ -1,4 +1,4 @@
-package hu.tvarga.cheaplist.hybrid;
+package hu.tvarga.cheaplist.cheaplistflutter;
 
 import android.os.Bundle;
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta content="IE=Edge" http-equiv="X-UA-Compatible">
+	<meta name="description" content="A new Flutter project.">
+	<meta name="google-signin-client_id"
+		  content="903386255290-o810dmulfnpvr4h1b6n16fm4jib8umsh.apps.googleusercontent.com">
+
+	<!-- iOS meta tags & icons -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="cheaplistflutter">
+	<link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+	<!-- Favicon -->
+	<link rel="shortcut icon" type="image/png" href="favicon.png"/>
+
+	<title>cheaplistflutter</title>
+	<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-firestore.js"></script>
+<!-- This script installs service_worker.js to provide PWA functionality to
+	 application. For more information, see:
+	 https://developers.google.com/web/fundamentals/primers/service-workers -->
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+
+</script>
+<!-- ADD THIS BEFORE YOUR main.dart.js SCRIPT -->
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCPN4eshtKQObze915LIJnfCibjx9Uj_Lc",
+    authDomain: "greenthumb-ad83e.firebaseapp.com",
+    databaseURL: "https://greenthumb-ad83e.firebaseio.com",
+    projectId: "greenthumb-ad83e",
+    storageBucket: "greenthumb-ad83e.appspot.com",
+    messagingSenderId: "903386255290",
+    appId: "1:903386255290:web:63531e36827d46dff21783"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+</script>
+<!-- END OF FIREBASE INIT CODE -->
+<script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>

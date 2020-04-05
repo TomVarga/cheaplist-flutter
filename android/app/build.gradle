@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "hu.tvarga.cheaplist.hybrid"
+        applicationId "hu.tvarga.cheaplist.cheaplistflutter"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1

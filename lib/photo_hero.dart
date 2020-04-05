@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cheaplist/constants.dart';
 import 'package:cheaplist/dto/daos.dart';
 import 'package:cheaplist/user_settings_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PhotoHero extends StatelessWidget {
@@ -42,23 +43,45 @@ class PhotoHero extends StatelessWidget {
 
   Widget getStack() {
     if (thumbnail) {
-      return new CachedNetworkImage(
-        imageUrl: item.thumbnail,
-        fit: BoxFit.contain,
-      );
+      if (kIsWeb) {
+        return new Image(
+            image: new NetworkImage(item.thumbnail), fit: BoxFit.contain);
+      } else {
+        return new CachedNetworkImage(
+          imageUrl: item.thumbnail,
+          fit: BoxFit.contain,
+        );
+      }
     } else {
       return new Stack(
-        children: <Widget>[
-          new CachedNetworkImage(
-            imageUrl: item.thumbnail,
-            fit: BoxFit.contain,
-          ),
-          new CachedNetworkImage(
-            imageUrl: thumbnail ? item.thumbnail : item.imageURL,
-            fit: BoxFit.contain,
-          )
-        ],
+        children: getStackImages(),
       );
+    }
+  }
+
+  List<Widget> getStackImages() {
+    if (kIsWeb) {
+      return <Widget>[
+        Image(
+          image: new NetworkImage(item.thumbnail),
+          fit: BoxFit.contain,
+        ),
+        Image(
+          image: new NetworkImage(thumbnail ? item.thumbnail : item.imageURL),
+          fit: BoxFit.contain,
+        ),
+      ];
+    } else {
+      return <Widget>[
+        new CachedNetworkImage(
+          imageUrl: item.thumbnail,
+          fit: BoxFit.contain,
+        ),
+        new CachedNetworkImage(
+          imageUrl: thumbnail ? item.thumbnail : item.imageURL,
+          fit: BoxFit.contain,
+        )
+      ];
     }
   }
 }
